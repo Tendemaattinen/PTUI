@@ -1,0 +1,3 @@
+dotnet ef migrations add Initial --project "src/PTUI.Core/PTUI.Core.csproj" --startup-project "src/PTUI.Api/PTUI.Api.csproj" --output-dir Migrations --context ApplicationDbContext
+
+dotnet ef database update --project "src/PTUI.Core/PTUI.Core.csproj" --startup-project "src/PTUI.Api/PTUI.Api.csproj" --output-dir Migrations --context ApplicationDbContext

@@ -1,0 +1,3 @@
+https://geshan.com.np/blog/2021/12/docker-postgres/
+https://hub.docker.com/_/postgres
+https://zhao-li.medium.com/getting-started-with-postgresql-using-docker-compose-34d6b808c47c
