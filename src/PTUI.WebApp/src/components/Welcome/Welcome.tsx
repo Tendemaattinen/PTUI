@@ -40,12 +40,21 @@ function Welcome() {
     return(
         <div id={globalStyle.welcomeComponent}>
             <h1>TODO: User guide / information</h1>
+            <p>1. Register</p>
+            <p>2. Login</p>
+            <p>3. Fill preference quiz (link here)</p>
+            <p>4. Give rating</p>
+            <p>5. Edit if want</p>
+            <p>6. New rating</p>
+            <p>7. Continue cycle if want</p>
+            <p>8. Fill google forms</p>
+            <br/>
             <h1>Welcome page</h1>
             <h2>Testing tools</h2>
             
-            <h3>Api testing</h3>
-            <input type={"button"} value={"Test secure API"} onClick={testApiCall}/>
-            <p id={"securedApiText"}></p>
+            {/*<h3>Api testing</h3>*/}
+            {/*<input type={"button"} value={"Test secure API"} onClick={testApiCall}/>*/}
+            {/*<p id={"securedApiText"}></p>*/}
 
             {/*<h3>User settings</h3>*/}
             {/*<form onSubmit={handleSubmit(submitForm)}>*/}

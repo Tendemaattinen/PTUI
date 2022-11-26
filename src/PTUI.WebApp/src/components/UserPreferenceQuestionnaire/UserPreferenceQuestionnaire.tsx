@@ -59,9 +59,6 @@ function UserPreferenceQuestionnaire() {
             "font-family": formData.fontName,
             "font-size-multiplier": formData.fontSize
         };
-        
-        console.log(style);
-        
         return JSON.stringify(style);
     }
     
@@ -143,22 +140,33 @@ function UserPreferenceQuestionnaire() {
             <h1>Preference questionnaire</h1>
             <h2>Info</h2>
             <p>Create some kind of info box here. Accordion would be nice solution.</p>
-            <h2>Rating component</h2>
-            <form onSubmit={handleSubmit(saveUserRating)}>
-                <label>Rate current version:</label>
-                <select {...register('rating')}>
-                    {Array.from(Array(10).keys()).map(item => {
-                        return (<option key={item} value={item}>{item}</option> )
-                    })}
-                </select>
-                <label>Why this rating:</label>
-                <textarea {...register('ratingReason')}></textarea>
-                <input type={"submit"} value={"Submit"}/>
-            </form>
+            <div>
+                <h2>Rating component</h2>
+                <form onSubmit={handleSubmit(saveUserRating)}>
+                    <div>
+                        <div>
+                            <label>Rate current version:&nbsp;</label>
+                            <select {...register('rating')}>
+                                {Array.from(Array(10).keys()).map(item => {
+                                    return (<option key={item} value={item}>{item}</option> )
+                                })}
+                            </select>
+                        </div>
+                        <div>
+                            <label>Reason for rating:&nbsp;</label>
+                            <div>
+                                <textarea className={upqStyle.reasonRatingTextArea} {...register('ratingReason')} rows={4} cols={50}></textarea>
+                            </div>
+                        </div>
+                        <div>
+                            <input type={"submit"} value={"Submit"}/>
+                        </div>
+                    </div>
+                </form>
+            </div>
             
             <h2>Style</h2>
             <form onSubmit={handleSubmit(setUserStyle)} id={upqStyle.upqStyleForm}>
-                
                 <h3>Background color</h3>
                 <div className={upqStyle.upqStyleFormDivRow}>
                     <label>Color:</label>
