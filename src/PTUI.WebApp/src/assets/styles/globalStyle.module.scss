@@ -16,6 +16,9 @@
   --p-text-color: var(--text-color);
   --label-text-color: var(--text-color);
   --font-size-multiplier: 1;
+  --letter-spacing: 0em;
+  --line-height: 1.5;
+  --word-spacing: 0em;
 }
 
 // Global settings, applies to everywhere 
@@ -63,7 +66,10 @@ html * {
   
   p {
     color: var(--p-text-color);
-    font-size: calc(var(--font-size-multiplier) * 1rem)
+    font-size: calc(var(--font-size-multiplier) * 1rem);
+    letter-spacing: var(--letter-spacing);
+    line-height: var(--line-height);
+    word-spacing: var(--word-spacing);
   }
 
   input[type='radio'] {
@@ -102,7 +108,7 @@ html * {
   max-width: 50em;
   //max-width: 70ch;
   //font-family: "Helvetica", "Arial", sans-serif;
-  line-height: 1.5;
+  //line-height: 1.5;
   padding: 0.5em 0.5em 0.5em 0.5em;
 
   p {

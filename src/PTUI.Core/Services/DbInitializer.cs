@@ -35,6 +35,9 @@ public class DbInitializer
         context.Settings.Add(new Setting("font-size-multiplier", "multiplier of default font size", SettingType.Css));
         context.Settings.Add(new Setting("navbar-location", "location of navbar", SettingType.Navbar));
         context.Settings.Add(new Setting("complementary-color", "complementary color", SettingType.Css));
+        context.Settings.Add(new Setting("letter-spacing", "letter spacing", SettingType.Css));
+        context.Settings.Add(new Setting("line-height", "line height", SettingType.Css));
+        context.Settings.Add(new Setting("word-spacing", "word spacing", SettingType.Css));
 
         await context.SaveChangesAsync();
         return true;
@@ -170,6 +173,45 @@ public class DbInitializer
         
         context.SettingValues.Add(new SettingValue("pink", "hsla(326, 67%, 53%, 1)",
             context.Settings.FirstOrDefault(x => x.Name == "complementary-color")!.Id));
+        # endregion
+        
+        # region letter spacing
+        
+        context.SettingValues.Add(new SettingValue("small", "-0.25em",
+            context.Settings.FirstOrDefault(x => x.Name == "letter-spacing")!.Id));
+        
+        context.SettingValues.Add(new SettingValue("medium", "0em",
+            context.Settings.FirstOrDefault(x => x.Name == "letter-spacing")!.Id));
+        
+        context.SettingValues.Add(new SettingValue("big", "0.25em",
+            context.Settings.FirstOrDefault(x => x.Name == "letter-spacing")!.Id));
+        
+        # endregion
+        
+        # region line height
+        
+        context.SettingValues.Add(new SettingValue("small", "1",
+            context.Settings.FirstOrDefault(x => x.Name == "line-height")!.Id));
+        
+        context.SettingValues.Add(new SettingValue("medium", "1.5",
+            context.Settings.FirstOrDefault(x => x.Name == "line-height")!.Id));
+        
+        context.SettingValues.Add(new SettingValue("big", "2",
+            context.Settings.FirstOrDefault(x => x.Name == "line-height")!.Id));
+
+        # endregion
+        
+        # region word spacing
+        
+        context.SettingValues.Add(new SettingValue("small", "-0.25em",
+            context.Settings.FirstOrDefault(x => x.Name == "word-spacing")!.Id));
+        
+        context.SettingValues.Add(new SettingValue("medium", "0em",
+            context.Settings.FirstOrDefault(x => x.Name == "word-spacing")!.Id));
+        
+        context.SettingValues.Add(new SettingValue("big", "0.25em",
+            context.Settings.FirstOrDefault(x => x.Name == "word-spacing")!.Id));
+        
         # endregion
 
         await context.SaveChangesAsync();

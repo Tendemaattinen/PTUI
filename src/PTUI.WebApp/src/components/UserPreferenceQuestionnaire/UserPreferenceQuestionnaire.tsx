@@ -57,7 +57,10 @@ function UserPreferenceQuestionnaire() {
             "text-color": formData.textColor1,
             "complementary-color": formData.complementaryColor1,
             "font-family": formData.fontName,
-            "font-size-multiplier": formData.fontSize
+            "font-size-multiplier": formData.fontSize,
+            "letter-spacing": formData.letterSpacing,
+            "line-height": formData.lineHeight,
+            "word-spacing": formData.wordSpacing
         };
         return JSON.stringify(style);
     }
@@ -234,6 +237,36 @@ function UserPreferenceQuestionnaire() {
                     <label>Size:</label>
                     <select {...register("fontSize")} id={"fontSizeSelectId"}>
                         {getSettingValues("font-size-multiplier").map(item => {
+                            return (<option key={item.value} value={item.value}>{item.name}</option> )
+                        })}
+                    </select>
+                </div>
+
+                <h3>Letter spacing</h3>
+                <div className={upqStyle.upqStyleFormDivRow}>
+                    <label>Spacing:</label>
+                    <select {...register("letterSpacing")}>
+                        {getSettingValues("letter-spacing").map(item => {
+                            return (<option key={item.value} value={item.value}>{item.name}</option> )
+                        })}
+                    </select>
+                </div>
+
+                <h3>Line height</h3>
+                <div className={upqStyle.upqStyleFormDivRow}>
+                    <label>Height:</label>
+                    <select {...register("lineHeight")}>
+                        {getSettingValues("line-height").map(item => {
+                            return (<option key={item.value} value={item.value}>{item.name}</option> )
+                        })}
+                    </select>
+                </div>
+
+                <h3>Word spacing</h3>
+                <div className={upqStyle.upqStyleFormDivRow}>
+                    <label>Spacing:</label>
+                    <select {...register("wordSpacing")}>
+                        {getSettingValues("word-spacing").map(item => {
                             return (<option key={item.value} value={item.value}>{item.name}</option> )
                         })}
                     </select>
