@@ -1,6 +1,6 @@
 ﻿namespace PTUI.Core.Enums;
 
-public enum Roles
+public enum Role
 {
     Administrator,
     User

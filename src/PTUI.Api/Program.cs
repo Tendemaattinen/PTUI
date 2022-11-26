@@ -1,5 +1,7 @@
 using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +10,8 @@ using PTUI.Core.Interfaces;
 using PTUI.Core.Services;
 using PTUI.Core.Model;
 using PTUI.Core.Context;
+using PTUI.Core.Entities;
+using PTUI.Core.Enums;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,8 +34,9 @@ services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<A
 // Settings
 services.Configure<JWTSettings>(configuration.GetSection("JWT"));
 
-// DI
+// Dependency injections
 services.AddScoped<IUserService, UserService>();
+services.AddScoped<ISettingsService, SettingsService>();
 
 // Database
 services.AddDbContext<ApplicationDbContext>(options =>
@@ -64,8 +69,6 @@ services.AddAuthentication(options =>
     });
 
 
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -73,6 +76,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    
+    // Seed database
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var a = await DbInitializer.InitializeSettings(context);
+    var s = await DbInitializer.InitializeSettingValues(context);
 }
 
 // Configure CORS policy
@@ -87,5 +96,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();

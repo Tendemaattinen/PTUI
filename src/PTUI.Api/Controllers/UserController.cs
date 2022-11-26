@@ -6,10 +6,10 @@ using PTUI.Core.Interfaces;
 using PTUI.Core.Entities;
 using PTUI.Core.Model;
 using PTUI.Core.Models;
+using Microsoft.AspNet.Identity;
 
 namespace PTUI.Api.Controllers;
 
-//[Route("api/[controller]")]
 [ApiController]
 public class UserController : ControllerBase
 {
@@ -27,82 +27,146 @@ public class UserController : ControllerBase
     {
         return Ok("Api connection works");
     }
+    
+    [HttpGet("secureTestApi")]
+    [Authorize]
+    public async Task<IActionResult> SecureTestApiAsync()
+    {
+        return Ok("Secure Api connection works");
+    }
 
     [HttpPost("register")]
     public async Task<IActionResult> RegisterAsync(RegisterModel model)
     {
-        var result = await _userService.RegisterAsync(model);
-        return Ok(result);
+        var (result, message) = await _userService.RegisterAsync(model);
+        if (result)
+        {
+            return Ok(message);
+        }
+
+        return BadRequest(message);
     }
     
     [HttpPost("token")]
-        public async Task<IActionResult> GetTokenAsync(TokenRequestModel model)
+    public async Task<IActionResult> GetTokenAsync(TokenRequestModel model)
+    {
+        var result = await _userService.GetTokenAsync(model, TransformJwtSettings(_jwtSettings));
+        if (result.IsAuthenticated == false)
         {
-            var result = await _userService.GetTokenAsync(model, TransformJwtSettings(_jwtSettings));
-            SetRefreshTokenInCookie(result.RefreshToken);
-            return Ok(result);
+            return BadRequest("Credentials do not match");
         }
-        [HttpPost("add-role")]
-        public async Task<IActionResult> AddRoleAsync(AddRoleModel model)
+        SetRefreshTokenInCookie(result.RefreshToken);
+        return Ok(result);
+    }
+    [HttpPost("add-role")]
+    public async Task<IActionResult> AddRoleAsync(AddRoleModel model)
+    {
+        var result = await _userService.AddRoleAsync(model);
+        return Ok(result);
+    }
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken()
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+        
+        var response = await _userService.RefreshTokenAsync(refreshToken, TransformJwtSettings(_jwtSettings));
+        if (!string.IsNullOrEmpty(response.RefreshToken))
+            SetRefreshTokenInCookie(response.RefreshToken);
+        return Ok(response);
+    }
+    
+
+    [HttpPost("revoke-token")]
+    public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenRequest model)
+    {
+        // accept token from request body or cookie
+        var token = model.Token ?? Request.Cookies["refreshToken"];
+
+        if (string.IsNullOrEmpty(token))
+            return BadRequest(new { message = "Token is required" });
+
+        var response = _userService.RevokeToken(token);
+
+        if (!response)
+            return NotFound(new { message = "Token not found" });
+
+        return Ok(new { message = "Token revoked" });
+    }
+    private void SetRefreshTokenInCookie(string refreshToken)
+    {
+        var cookieOptions = new CookieOptions
         {
-            var result = await _userService.AddRoleAsync(model);
-            return Ok(result);
-        }
-        [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken()
+            HttpOnly = true,
+            Expires = DateTime.UtcNow.AddDays(10),
+        };
+        Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+    }
+
+    [Authorize]
+    [HttpPost("tokens/{id}")]
+    public IActionResult GetRefreshTokens(string id)
+    {
+        var user = _userService.GetById(id);
+        return Ok(user.RefreshTokens);
+    }
+
+    // TODO: Move to common/helpers folder
+    private static JWT TransformJwtSettings(JWTSettings original)
+    {
+        return new JWT
         {
-            var refreshToken = Request.Cookies["refreshToken"];
-            
-            var response = await _userService.RefreshTokenAsync(refreshToken, TransformJwtSettings(_jwtSettings));
-            if (!string.IsNullOrEmpty(response.RefreshToken))
-                SetRefreshTokenInCookie(response.RefreshToken);
-            return Ok(response);
+            Key = original.Key,
+            Issuer = original.Issuer,
+            Audience = original.Audience,
+            DurationInMinutes = original.DurationInMinutes,
+        };
+    }
+
+    [HttpGet("getUserPreferences")]
+    [Authorize]
+    public async Task<IActionResult> GetUserPreferencesAsync(string tokenUserId)
+    {
+        var userId = User.Identity.GetUserId();
+        if (!_userService.IsUserSameAsInToken(userId, tokenUserId))
+        {
+            return Unauthorized();
         }
         
-
-        [HttpPost("revoke-token")]
-        public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenRequest model)
+        return Ok(await _userService.GetUserPreferences(tokenUserId));
+    }
+    
+    [HttpPost("setUserPreferences")]
+    [Authorize]
+    public async Task<IActionResult> SetUserPreferencesAsync([FromBody] UserPreferencesModel preferencesModel)
+    {
+        var userId = User.Identity.GetUserId();
+        if (!_userService.IsUserSameAsInToken(userId, preferencesModel.UserId))
         {
-            // accept token from request body or cookie
-            var token = model.Token ?? Request.Cookies["refreshToken"];
-
-            if (string.IsNullOrEmpty(token))
-                return BadRequest(new { message = "Token is required" });
-
-            var response = _userService.RevokeToken(token);
-
-            if (!response)
-                return NotFound(new { message = "Token not found" });
-
-            return Ok(new { message = "Token revoked" });
-        }
-        private void SetRefreshTokenInCookie(string refreshToken)
-        {
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(10),
-            };
-            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+            return Unauthorized();
         }
 
-        [Authorize]
-        [HttpPost("tokens/{id}")]
-        public IActionResult GetRefreshTokens(string id)
+        if (await _userService.SetUserPreferences(preferencesModel.UserId, preferencesModel.Preferences, preferencesModel.NavbarLocation))
         {
-            var user = _userService.GetById(id);
-            return Ok(user.RefreshTokens);
+            return Ok(preferencesModel);
+        }
+        else
+        {
+            return Problem(detail: "Internal error", statusCode: 500);
+        }
+    }
+
+    [HttpPost("saveRating")]
+    [Authorize]
+    public async Task<IActionResult> SaveRatingAsync([FromBody] RatingPostModel ratingModel)
+    {
+        if (int.TryParse(ratingModel.Rating, out var rating))
+        {
+            return BadRequest("Invalid rating");
         }
 
-        // TODO: Move to common/helpers folder
-        private static JWT TransformJwtSettings(JWTSettings original)
-        {
-            return new JWT
-            {
-                Key = original.Key,
-                Issuer = original.Issuer,
-                Audience = original.Audience,
-                DurationInMinutes = original.DurationInMinutes,
-            };
-        }
+        await _userService.SaveRating(ratingModel.UserId, rating, ratingModel.Reason);
+        return Ok();
+    }
+
+
 }

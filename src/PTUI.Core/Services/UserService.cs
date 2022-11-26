@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PTUI.Core.Interfaces;
@@ -29,39 +30,41 @@ public class UserService : IUserService
         _context = context;
     }
 
-    public async Task<string> RegisterAsync(RegisterModel model)
+    public async Task<(bool, string)> RegisterAsync(RegisterModel model)
     {
-        // Check if user is found from database
-        if (_userManager.FindByEmailAsync(model.Email) != null)
+        if (await _userManager.FindByNameAsync(model.Username) != null)
         {
-            return "User exists!";
+            return (false, "User exists!");
         }
+        
 
         var user = new ApplicationUser()
         {
             UserName = model.Username,
-            Email = model.Email,
-            FirstName = model.FirstName,
-            LastName = model.LastName
+            FirstName = "",
+            LastName = "",
+            Email = "",
         };
         
         var result = await _userManager.CreateAsync(user, model.Password);
-        // if (result.Succeeded)
-        // {
-        //     await _userManager.AddToRoleAsync(user, Authorization.default_role.ToString());                 
-        // }
-        
-        return "User registered";
+        if (result.Succeeded)
+        {
+            return (true, "User registered");
+        }
+
+        var messages = result.Errors.Select(x => x.Description.TrimEnd('.'));
+        return (false, string.Join(", ", messages));
     }
 
     public async Task<AuthenticationModel> GetTokenAsync(TokenRequestModel model, JWT jwtSettings)
         {
             var authenticationModel = new AuthenticationModel();
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            //var user = await _userManager.FindByEmailAsync(model.Email);
+            var user = await _userManager.FindByNameAsync(model.Username);
             if (user == null)
             {
                 authenticationModel.IsAuthenticated = false;
-                authenticationModel.Message = $"No Accounts Registered with {model.Email}.";
+                authenticationModel.Message = $"No Accounts Registered with {model.Username}.";
                 return authenticationModel;
             }
             if (await _userManager.CheckPasswordAsync(user, model.Password))
@@ -101,17 +104,14 @@ public class UserService : IUserService
         private RefreshToken CreateRefreshToken()
         {
             var randomNumber = new byte[32];
-            using (var generator = new RNGCryptoServiceProvider())
+            using var generator = RandomNumberGenerator.Create();
+            generator.GetBytes(randomNumber);
+            return new RefreshToken
             {
-                generator.GetBytes(randomNumber);
-                return new RefreshToken
-                {
-                    Token = Convert.ToBase64String(randomNumber),
-                    Expires = DateTime.UtcNow.AddDays(7),
-                    Created = DateTime.UtcNow
-                };
-
-            }
+                Token = Convert.ToBase64String(randomNumber),
+                Expires = DateTime.UtcNow.AddDays(7),
+                Created = DateTime.UtcNow
+            };
         }
 
         private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user, JWT jwtSettings)
@@ -150,18 +150,22 @@ public class UserService : IUserService
             {
                 return $"No Accounts Registered with {model.Email}.";
             }
-            if (await _userManager.CheckPasswordAsync(user, model.Password))
+
+            if (!await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                var roleExists = Enum.GetNames(typeof(Roles)).Any(x => x.ToLower() == model.Role.ToLower());
-                if (roleExists)
-                {
-                    var validRole = Enum.GetValues(typeof(Roles)).Cast<Roles>().FirstOrDefault(x => string.Equals(x.ToString(), model.Role, StringComparison.CurrentCultureIgnoreCase));
-                    await _userManager.AddToRoleAsync(user, validRole.ToString());
-                    return $"Added {model.Role} to user {model.Email}.";
-                }
+                return $"Incorrect Credentials for user {user.Email}.";
+            }
+
+            var roleExists = Enum.GetNames(typeof(Role)).Any(x => string.Equals(x, model.Role, StringComparison.CurrentCultureIgnoreCase));
+                
+            if (!roleExists)
+            {
                 return $"Role {model.Role} not found.";
             }
-            return $"Incorrect Credentials for user {user.Email}.";
+                
+            var validRole = Enum.GetValues(typeof(Role)).Cast<Role>().FirstOrDefault(x => string.Equals(x.ToString(), model.Role, StringComparison.CurrentCultureIgnoreCase));
+            await _userManager.AddToRoleAsync(user, validRole.ToString());
+            return $"Added {model.Role} to user {model.Email}.";
 
         }
 
@@ -192,11 +196,11 @@ public class UserService : IUserService
             var newRefreshToken = CreateRefreshToken();
             user.RefreshTokens.Add(newRefreshToken);
             _context.Update(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             //Generates new jwt
             authenticationModel.IsAuthenticated = true;
-            JwtSecurityToken jwtSecurityToken = await CreateJwtToken(user, jwtSettings);
+            var jwtSecurityToken = await CreateJwtToken(user, jwtSettings);
             authenticationModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             authenticationModel.Email = user.Email;
             authenticationModel.UserName = user.UserName;
@@ -229,6 +233,66 @@ public class UserService : IUserService
         public ApplicationUser GetById(string id)
         {
             return _context.Users.Find(id);
+        }
+
+        public async Task<string> GetUserPreferences(string id)
+        {
+            return _context.UserPreferences.FirstOrDefault(x => x.UserId == id)?.PreferencesJson ?? "{}";
+        }
+        
+        public async Task<bool> SetUserPreferences(string id, string preferences, int navbarLocation)
+        {
+            var userPreferences = new UserPreference
+            {
+                UserId = id,
+                PreferencesJson = preferences,
+                NavbarLocation = (NavbarLocation)navbarLocation
+            };
+            
+            try
+            {
+                _context.Add(userPreferences);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // TODO: Improve error handling
+                return false;
+            }
+        }
+
+        public bool IsUserSameAsInToken(string? userId, string userIdInToken)
+        {
+            if (userId is null)
+            {
+                return false;
+            }
+
+            return userId == userIdInToken;
+        }
+
+        public async Task<bool> SaveRating(string userId, int rating, string reason)
+        {
+            var userRating = new UserRating()
+            {
+                UserId = userId,
+                Rating = rating,
+                Reason = reason,
+                Timestamp = DateTime.Now
+            };
+            
+            try
+            {
+                _context.Add(userRating);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // TODO: Improve error handling
+                return false;
+            }
         }
 }
 

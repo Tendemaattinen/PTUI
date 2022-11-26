@@ -6,7 +6,7 @@ namespace PTUI.Core.Interfaces;
 
 public interface IUserService
 {
-    Task<string> RegisterAsync(RegisterModel model);
+    Task<(bool, string)> RegisterAsync(RegisterModel model);
     Task<AuthenticationModel> GetTokenAsync(TokenRequestModel model, JWT jwtSettings);
     Task<string> AddRoleAsync(AddRoleModel model);
 
@@ -14,4 +14,9 @@ public interface IUserService
 
     bool RevokeToken(string token);
     ApplicationUser GetById(string id);
+
+    Task<string> GetUserPreferences(string id);
+    Task <bool> SetUserPreferences(string id, string preferences, int navbarLocation);
+    bool IsUserSameAsInToken(string? userId, string userIdInToken);
+    Task<bool> SaveRating(string userId, int rating, string reason);
 }

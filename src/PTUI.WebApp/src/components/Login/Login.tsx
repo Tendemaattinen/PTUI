@@ -1,54 +1,65 @@
-﻿import React, { useState } from 'react';
+﻿import React, {useEffect, useState} from 'react';
+import {FieldValues, useForm} from "react-hook-form";
 
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-
-import axios from 'axios';
-
+import {userLogin} from "../../reducers/userSlice";
+import {useAppDispatch, useAppSelector} from "../../hooks/hooks";
+import {useNavigate} from "react-router-dom";
 
 import styles from './Login.module.scss';
+import globalStyle from '../../assets/styles/globalStyle.module.scss';
 
 function Login() {
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    
-    const baseUrl: string = process.env.REACT_APP_API_BASE_URL?.toString() ?? "";
-    
-    const login = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const { userInfo, loading, error } = useAppSelector((state) => state.user)
 
-        const url: string = baseUrl + "token";
-        const content: string = JSON.stringify({email: email, password: password})
-
-        axios.post(url, content, {
-            headers: {
-                'Content-Type': 'application/json',
-            }})
-            .then(function (response) {
-                setEmail("");
-                setPassword("");
-                alert("User logged in");
-            })
-            .catch(function(error) {
-                console.log("Error: " + error);
-            })
+    const navigate = useNavigate()
+    
+    const dispatch = useAppDispatch();
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    
+    const submitForm = (formData:  FieldValues) => {
+        const username: string = formData.username;
+        const password: string = formData.password;
+        dispatch(userLogin({username, password}));
     }
+    
+    useEffect(() => {
+        if (userInfo != null) {
+            navigate('/');
+        }
+    }, [navigate, userInfo])
+    
+    let errorMessage: (string | null) = null;
+
+    // TODO: Correct error handling
+    useEffect(() => {
+        if (error != null) {
+            errorMessage = "virhe";
+        }
+    }, [error])
 
     return (
-        <>
-            <h1>Login page</h1>
-            <form onSubmit={(e) => login(e)}>
-                <label>
-                    Email:
-                    <input type={"email"} name="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-                </label>
-                <label>
-                    Password:
-                    <input type={"password"} name="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-                </label>
-                <input type={"submit"} value={"submit"} className={styles.loginButtonV2}/>
+        <div id={globalStyle.loginComponent}>
+            <h1>Login</h1>
+            <div id={"errorMessage"} className={`${globalStyle.message} ${globalStyle.error}`} style={{display: error !== null ? 'block' : 'none'}}>{error}</div>
+            <form onSubmit={handleSubmit(submitForm)} className={globalStyle.authForm}>
+                <div>
+                    <div>
+                        <label>Username:</label>
+                    </div>
+                    <input type={"text"} {...register('username', {required: true})} />
+                    {errors?.username?.type === 'required' && <p>This field is required</p>}
+                </div>
+                <div>
+                    <div>
+                        <label>Password:</label>
+                    </div>
+                    <input type={"password"} {...register('password', {required: true})}/>
+                </div>
+                <div>
+                    <input type={"submit"} className={globalStyle.button}/>
+                </div>
             </form>
-        </>
+        </div>
     );
 }
 

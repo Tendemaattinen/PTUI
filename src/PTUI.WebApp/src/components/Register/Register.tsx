@@ -1,102 +1,75 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
+import {FieldValues, useForm} from "react-hook-form";
+
+import {registerUser} from "../../reducers/userSlice";
 
 import './Register.module.scss';
 import axios from "axios";
 
+import registerStyle from './Register.module.scss';
+import globalStyle from '../../assets/styles/globalStyle.module.scss';
+import {useAppDispatch, useAppSelector} from "../../hooks/hooks";
+
 function Register() {
-    // Init states
-    const [firstName, setFirstName] = React.useState("");
-    const [lastName, setLastName] = React.useState("");
-    const [username, setUsername] = React.useState("");
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [confirmPassword, setConfirmPassword] = React.useState("");
+    const {loading, error, success} = useAppSelector(
+        (state) => state.user
+    )
+    const dispatch = useAppDispatch();
+    const { register, handleSubmit, formState: { errors } } = useForm();
     
-    const registerUser = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (!(await validateForm())) {
-            return false;
+    const submitForm = (formData:  FieldValues) => {
+        if (formData.password !== formData.confirmPassword) {
+            alert("Confirm password do not match to password")
+            return;
         }
-        const url: string = process.env.REACT_APP_API_BASE_URL + "register";
-        const content: string = JSON.stringify(await newRegisterObject())
-        
-        axios.post(url, content, {
-            headers: {
-                'Content-Type': 'application/json',
-            }})
-            .then(function (response) {
-                emptyForm();
-                alert("User registered");
-            })
-            .catch(function(error) {
-                console.log("Error: " + error);
-            })
-    }
-    
-    const emptyForm = () => {
-        setFirstName("");
-        setLastName("");
-        setUsername("");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-    }
-    
-    const validateForm = async() => {
-        if (password != confirmPassword) {
-            alert("Password mismatch!");
-            return false;
-        }
-        return true;
-        
-        // TODO: Additional validation
-        // Password length
-        // Email is email
-        // Username is not in use
-        // Email is not in use
-    }
-    
-    const newRegisterObject = async () => {
-        return {
-            firstName: firstName,
-            lastName: lastName,
-            username: username,
-            email: email,
-            password: password
-        }
+
+        const firstName: string = "";
+        const lastName: string = "";
+        const username: string = formData.username;
+        const email: string = "";
+        const password: string = formData.password;
+        dispatch(registerUser({firstName, lastName, username, email, password}));
     }
     
     return (
-        <>
-            <h1>Register page</h1>
-            <form onSubmit={(e) => registerUser(e)}>
-                <label>
-                    First name:
-                    <input type={"text"} name="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
-                </label>
-                <label>
-                    Last name:
-                    <input type={"text"} name="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)}/>
-                </label>
-                <label>
-                    Username:
-                    <input type={"text"} name="username" value={username} onChange={(e) => setUsername(e.target.value)}/>
-                </label>
-                <label>
-                    Email:
-                    <input type={"email"} name="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-                </label>
-                <label>
-                    Password:
-                    <input type={"password"} name="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-                </label>
-                <label>
-                    Confirm password:
-                    <input type={"password"} name="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
-                </label>
-                <input type={"submit"} value={"submit"}/>
+        <div className={registerStyle.registerForm}>
+            <h1>Register</h1>
+            <div id={"errorMessage"} className={`${globalStyle.message} ${globalStyle.error}`} style={{display: error !== null && error !== "" ? 'block' : 'none'}}>{error}</div>
+            <div id={"successMessage"} className={`${globalStyle.message} ${globalStyle.success}`} style={{display: success !== false ? 'block' : 'none'}}>{"User registered"}</div>
+            <form onSubmit={handleSubmit(submitForm)} className={globalStyle.authForm}>
+                <div>
+                    <div>
+                        <label>
+                            Username:
+                        </label>
+                    </div>
+                    <input type={"text"} {...register('username', {required: true})}/>
+                    {errors?.username?.type === 'required' && <p className={globalStyle.errorText}>This field is required</p>}
+                </div>
+                <div>
+                    <div>
+                        <label>
+                            Password:
+                        </label>
+                    </div>
+                    <input type={"password"} {...register('password', {required: true})}/>
+                    {errors?.password?.type === 'required' && <p className={globalStyle.errorText}>This field is required</p>}
+                </div>
+                <div>
+                    <div>
+                        <label>
+                            Confirm password:
+                        </label>
+                    </div>
+                    <input type={"password"} {...register('confirmPassword', {required: true})}/>
+                    {errors?.confirmPassword?.type === 'required' && <p className={globalStyle.errorText}>This field is required</p>}
+                </div>
+                <div>
+                    <input type={"submit"} value={"submit"} className={globalStyle.button}/>
+                </div>
             </form>
-        </>
+        </div>
     );
 }
 

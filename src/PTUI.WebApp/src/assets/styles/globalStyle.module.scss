@@ -1,0 +1,196 @@
+﻿:root {
+  --text-color: black;
+  --header-color: black;
+  --complementary-color: #e5e5e5;
+  --h1-color: var(--header-color);
+  --h2-color: var(--header-color);
+  --h3-color: var(--header-color);
+  --h4-color: var(--header-color);
+  --btn-bg-color: var(--complementary-color);
+  --bg-color: white;
+  --navbar-flex-direction: row wrap;
+  --navbar-bg-color: var(--complementary-color);
+  --footer-bg-color: var(--complementary-color);
+  --font-family: "Helvetica", "Arial", sans-serif;
+  --btn-color: black;
+  --p-text-color: var(--text-color);
+  --label-text-color: var(--text-color);
+  --font-size-multiplier: 1;
+}
+
+// Global settings, applies to everywhere 
+html * {
+
+  font-family: var(--font-family);
+  
+  h1 {
+    color: var(--h1-color);
+    font-size: calc(var(--font-size-multiplier) * 2.5rem);
+    margin-top: 0.5em;
+    padding-top: 0.5em;
+  }
+
+  h2 {
+    color: var(--h2-color);
+    font-size: calc(var(--font-size-multiplier) * 2rem);
+    margin-top: 0.5em;
+    padding-top: 0.5em;
+  }
+
+  h3 {
+    color: var(--h3-color);
+    font-size: calc(var(--font-size-multiplier) * 1.75rem);
+    margin-top: 0.5em;
+    padding-top: 0.5em;
+  }
+
+  h4 {
+    color: var(--h4-color);
+    font-size: calc(var(--font-size-multiplier) * 1.5rem);
+    margin-top: 0.5em;
+    padding-top: 0.5em;
+  }
+
+  button, input[type=button], input[type=submit], input[type=reset] {
+    background-color: var(--btn-bg-color);
+    color: var(--btn-color)
+  }
+  
+  label {
+    color: var(--label-text-color);
+    font-size: calc(var(--font-size-multiplier) * 1rem)
+  }
+  
+  p {
+    color: var(--p-text-color);
+    font-size: calc(var(--font-size-multiplier) * 1rem)
+  }
+
+  input[type='radio'] {
+    transform: scale(1.25);
+  }
+}
+
+.errorText {
+  color: red;
+}
+
+.appBody {
+  background-color: var(--bg-color);
+}
+
+#welcomeComponent {
+  
+}
+
+#loginComponent {
+  
+}
+
+.authForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mainBody {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  margin: 0 auto;
+  max-width: 50em;
+  //max-width: 70ch;
+  //font-family: "Helvetica", "Arial", sans-serif;
+  line-height: 1.5;
+  padding: 0.5em 0.5em 0.5em 0.5em;
+
+  p {
+    color: var(--p-text-color);
+  }
+
+  label {
+    color: var(--p-text-color);
+  }
+  
+}
+
+.navbar{
+  display: flex;
+  background-color: var(--navbar-bg-color);
+  justify-content: center;
+  column-gap: 1em;
+  row-gap: 1em;
+  nav {
+    display: flex;
+    justify-content: center;
+    column-gap: 1em;
+    row-gap: 1em;;
+  }
+}
+
+.topNavbar {
+  height: 5vh; /* 100% Full-height */
+  width: 100%; /* 0 width - change this with JavaScript */
+  border-bottom: 1px solid black;
+  
+  nav {
+    margin: auto;
+    flex-direction: row;
+  }
+}
+
+.leftNavbar {
+  height: 100%; /* 100% Full-height */
+  width: 10%; /* 0 width - change this with JavaScript */
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 1em; /* Place content 60px from the top */
+  //transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */;
+  border-right: 1px solid black;
+  nav {
+    flex-direction: column;
+  }
+}
+
+.rightNavbar {
+  height: 100%; /* 100% Full-height */
+  width: 10%; /* 0 width - change this with JavaScript */
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 1em; /* Place content 60px from the top */
+  //transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */;
+  border-left: 1px solid black;
+  nav {
+    flex-direction: column;
+  }
+}
+
+.message {
+  padding: 10px;
+  margin: 10px;
+  color: #333;
+  background: #fafafa;
+  border: 1px solid #ccc;
+}
+
+.error {
+  color: #ba3939;
+  background: #ffe0e0;
+  border: 1px solid #a33a3a;
+}
+
+.success {
+  color: #2b7515;
+  background: #ecffd6;
+  border: 1px solid #617c42;
+}
+
+
+
