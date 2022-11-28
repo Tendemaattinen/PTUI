@@ -126,9 +126,9 @@ export const userLogin = createAsyncThunk<UserInfo, {username: string, password:
                     if (response.status != 200) {
                         throw thunkApi.rejectWithValue("Backend failure");
                     }
-                    localStorage.setItem('user', response.data.username);
+                    localStorage.setItem('user', response.data.userName);
                     localStorage.setItem('token', response.data.token);
-                    localStorage.setItem('userId', response.data.id);
+                    localStorage.setItem('userId', response.data.userId);
                     user = new UserInfo(response.data.userName, null);
                 })
                 .catch(function(error) {

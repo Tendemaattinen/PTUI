@@ -75,6 +75,7 @@ function UserPreferenceQuestionnaire() {
                 await axios.post(url, content, {
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
                     }
                 })
                     .then(function (response) {

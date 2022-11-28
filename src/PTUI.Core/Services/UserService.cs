@@ -74,6 +74,7 @@ public class UserService : IUserService
                 authenticationModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
                 authenticationModel.Email = user.Email;
                 authenticationModel.UserName = user.UserName;
+                authenticationModel.UserId = user.Id;
                 var rolesList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
                 authenticationModel.Roles = rolesList.ToList();
 
@@ -276,10 +277,11 @@ public class UserService : IUserService
         {
             var userRating = new UserRating()
             {
+                Id = new Guid(),
                 UserId = userId,
                 Rating = rating,
                 Reason = reason,
-                Timestamp = DateTime.Now
+                Timestamp = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc)
             };
             
             try

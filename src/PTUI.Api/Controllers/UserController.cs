@@ -159,7 +159,7 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> SaveRatingAsync([FromBody] RatingPostModel ratingModel)
     {
-        if (int.TryParse(ratingModel.Rating, out var rating))
+        if (!(int.TryParse(ratingModel.Rating, out var rating)))
         {
             return BadRequest("Invalid rating");
         }
