@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import {FieldValues, useForm} from "react-hook-form";
 
@@ -31,11 +31,19 @@ function Register() {
         const password: string = formData.password;
         dispatch(registerUser({firstName, lastName, username, email, password}));
     }
+
+    useEffect(() => {
+        let errorMessageElement = document.getElementById("errorMessage") || undefined;
+        if (error !== null && error !== "" && error !== undefined) {
+            errorMessageElement!.style!.display = "block";
+        }
+        errorMessageElement!.style!.display = "none";
+    }, [error])
     
     return (
         <div className={registerStyle.registerForm}>
             <h1>Register</h1>
-            <div id={"errorMessage"} className={`${globalStyle.message} ${globalStyle.error}`} style={{display: error !== null && error !== "" ? 'block' : 'none'}}>{error}</div>
+            <div id={"errorMessage"} className={`${globalStyle.message} ${globalStyle.error}`}>{error}</div>
             <div id={"successMessage"} className={`${globalStyle.message} ${globalStyle.success}`} style={{display: success !== false ? 'block' : 'none'}}>{"User registered"}</div>
             <form onSubmit={handleSubmit(submitForm)} className={globalStyle.authForm}>
                 <div>

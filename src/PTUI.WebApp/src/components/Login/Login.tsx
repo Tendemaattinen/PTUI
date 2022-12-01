@@ -28,19 +28,18 @@ function Login() {
         }
     }, [navigate, userInfo])
     
-    let errorMessage: (string | null) = null;
-
-    // TODO: Correct error handling
     useEffect(() => {
-        if (error != null) {
-            errorMessage = "virhe";
+        let errorMessageElement = document.getElementById("errorMessage") || undefined;
+        if (error !== null && error !== "" && error !== undefined) {
+            errorMessageElement!.style!.display = "block";
         }
+        errorMessageElement!.style!.display = "none";
     }, [error])
 
     return (
         <div id={globalStyle.loginComponent}>
             <h1>Login</h1>
-            <div id={"errorMessage"} className={`${globalStyle.message} ${globalStyle.error}`} style={{display: error !== null ? 'block' : 'none'}}>{error}</div>
+            <div id={"errorMessage"} className={`${globalStyle.message} ${globalStyle.error}`}>{error}</div>
             <form onSubmit={handleSubmit(submitForm)} className={globalStyle.authForm}>
                 <div>
                     <div>
