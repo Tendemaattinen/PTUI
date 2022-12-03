@@ -1,13 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Nodes;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using PTUI.Api.Settings;
 using PTUI.Core.Interfaces;
-using PTUI.Core.Entities;
 using PTUI.Core.Model;
-using PTUI.Core.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.EntityFrameworkCore;
 using PTUI.Core.Context;
@@ -182,13 +177,10 @@ public class PersonalizationController : ControllerBase
                         .Values.FirstOrDefault(y => y.Name.ToLower() == "default").Value;
                 break;
         }
+
+        // Save user settings
+        await _userService.SetUserPreferences(User.Identity.GetUserId(), JsonSerializer.Serialize(settingsObject), 0);
         
-        // "bg-color": formData.bgColor1,
-        // "header-color": formData.headerColor1,
-        // "text-color": formData.textColor1,
-        // "complementary-color": formData.complementaryColor1,
-        // "font-family": formData.fontName,
-        // "font-size-multiplier": formData.fontSize
         return Ok(settingsObject);
     }
 }
