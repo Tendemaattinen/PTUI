@@ -18,8 +18,7 @@ function UserPersonalization() {
         const content: string = JSON.stringify({username: localStorage.getItem('user') ?? "",
             interface: formData.interface , os: formData.os, time: formData.time, element: formData.element,
             colorCharacter: formData.colorCharacter, eyesight: formData.eyesight})
-
-        console.log(content);
+        
         let data = "";
         // API call
         await axios.post(url, content, {
@@ -27,7 +26,6 @@ function UserPersonalization() {
                 'Content-Type': 'application/json',
             }})
             .then(function (response) {
-                console.log(response);
                 data = JSON.stringify(response.data);
             })
             .catch(function(error) {

@@ -25,7 +25,6 @@ function Welcome() {
             })
             .catch(function(error) {
                 alert("Secure api call did not work");
-                console.log("Error: " + error);
             })
     }
 

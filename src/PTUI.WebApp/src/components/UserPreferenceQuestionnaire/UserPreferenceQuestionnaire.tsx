@@ -104,7 +104,6 @@ function UserPreferenceQuestionnaire() {
                 // }
             })
             .then(function (response) {
-                console.log(response);
                 settings = response.data;
                 setSettings(settings);
             })

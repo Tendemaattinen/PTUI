@@ -16,7 +16,6 @@ function NavigationBar() {
     const { userInfo, userToken } = useAppSelector((state) => state.user)
     
     useEffect(() => {
-        console.log("Effect username: " + userInfo?.username ?? "null");
         if (userInfo) {
             //dispatch(getUserDetails())
             const navbar = navbarRef.current;
