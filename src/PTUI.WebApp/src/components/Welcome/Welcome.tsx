@@ -39,18 +39,21 @@ function Welcome() {
     
     return(
         <div id={globalStyle.welcomeComponent}>
-            <h1>TODO: User guide / information</h1>
-            <p>1. Register</p>
-            <p>2. Login</p>
+            <h1>PTUI- Profile tailored user interfaces</h1>
+            <h2>About</h2>
+            <p>Proof of concept, DI work, about profile tailored userinterface, concept how to tailor 
+                user interface according user profile, no user profilization</p>
+            <h2>Steps</h2>
+            <p>1. Register new user, do not use any real credentials</p>
+            <p>2. Login as registered user</p>
             <p>3. Fill preference quiz (link here)</p>
-            <p>4. Give rating</p>
-            <p>5. Edit if want</p>
-            <p>6. New rating</p>
+            <p>4. Give rating of customazation on questionnare page (link)</p>
+            <p>5. Edit values if needed</p>
+            <p>6. Give rating for new customization</p>
             <p>7. Continue cycle if want</p>
             <p>8. Fill google forms</p>
             <br/>
-            <h1>Welcome page</h1>
-            <h2>Testing tools</h2>
+            <h2>Tools for tesing†</h2>
             
             {/*<h3>Api testing</h3>*/}
             {/*<input type={"button"} value={"Test secure API"} onClick={testApiCall}/>*/}
