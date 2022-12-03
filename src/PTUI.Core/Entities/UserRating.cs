@@ -14,4 +14,5 @@ public class UserRating
     public int Rating { get; set; }
     public string Reason { get; set; }
     public DateTime Timestamp { get; set; }
+    public int UserPreferenceVersion { get; set; }
 }

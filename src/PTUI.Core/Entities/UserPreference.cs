@@ -13,4 +13,5 @@ public class UserPreference
     public string UserId { get; set; }
     public string PreferencesJson { get; set; }
     public NavbarLocation NavbarLocation { get; set; }
+    public int Version { get; set; }
 }

@@ -16,7 +16,7 @@ public interface IUserService
     ApplicationUser GetById(string id);
 
     Task<string> GetUserPreferences(string id);
-    Task <bool> SetUserPreferences(string id, string preferences, int navbarLocation);
+    Task <bool> SetUserPreferences(string userId, string preferences, int navbarLocation);
     bool IsUserSameAsInToken(string? userId, string userIdInToken);
     Task<bool> SaveRating(string userId, int rating, string reason);
 }

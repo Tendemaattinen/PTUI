@@ -238,16 +238,20 @@ public class UserService : IUserService
 
         public async Task<string> GetUserPreferences(string id)
         {
-            return _context.UserPreferences.FirstOrDefault(x => x.UserId == id)?.PreferencesJson ?? "{}";
+            return _context.UserPreferences.Where(x => x.UserId == id)
+                ?.OrderByDescending(y => y.Version)
+                .FirstOrDefault()
+                ?.PreferencesJson ?? "{}";
         }
         
-        public async Task<bool> SetUserPreferences(string id, string preferences, int navbarLocation)
+        public async Task<bool> SetUserPreferences(string userId, string preferences, int navbarLocation)
         {
             var userPreferences = new UserPreference
             {
-                UserId = id,
+                UserId = userId,
                 PreferencesJson = preferences,
-                NavbarLocation = (NavbarLocation)navbarLocation
+                NavbarLocation = (NavbarLocation)navbarLocation,
+                Version = GetUserPreferencesMaxVersion(userId) + 1
             };
             
             try
@@ -281,7 +285,8 @@ public class UserService : IUserService
                 UserId = userId,
                 Rating = rating,
                 Reason = reason,
-                Timestamp = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc)
+                Timestamp = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
+                UserPreferenceVersion = GetUserPreferencesMaxVersion(userId)
             };
             
             try
@@ -295,6 +300,13 @@ public class UserService : IUserService
                 // TODO: Improve error handling
                 return false;
             }
+        }
+
+        private int GetUserPreferencesMaxVersion(string userId)
+        {
+            return _context.UserPreferences
+                .Where(x => x.ApplicationUser.Id == userId)
+                ?.Max(y => y.Version) ?? 0;
         }
 }
 
