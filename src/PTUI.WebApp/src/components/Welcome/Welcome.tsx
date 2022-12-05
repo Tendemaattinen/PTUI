@@ -53,7 +53,7 @@ function Welcome() {
             <p>7. Continue cycle if want</p>
             <p>8. Fill google forms</p>
             <br/>
-            <h2>Tools for tesing†</h2>
+            <h2>Tools for testing</h2>
             
             {/*<h3>Api testing</h3>*/}
             {/*<input type={"button"} value={"Test secure API"} onClick={testApiCall}/>*/}
