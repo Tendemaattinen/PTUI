@@ -69,37 +69,37 @@ function Welcome() {
             {/*    <button>Test change of Ui</button>*/}
             {/*</form>*/}
 
-            <h3>Settigs</h3>
-            <form onSubmit={handleSubmit(tailorUserInterfaceFake)}>
-                <label>
-                    Setting name:&nbsp;&nbsp;
-                </label>
-                <input type={"text"} {...register('setting')}/>
-                &nbsp;&nbsp;
-                <button>Get setting</button>
-            </form>
-
-            <h3>Navbar</h3>
-            <div style={{display: "flex", justifyContent: "center", columnGap: "1em"}}>
-                <form onSubmit={handleSubmit(UserInterfaceHelpers.setTopNavbar)}>
-                    <button>Top navbar</button>
-                </form>
-                <form onSubmit={handleSubmit(UserInterfaceHelpers.setLeftNavbar)}>
-                    <button>Left navbar</button>
-                </form>
-                <form onSubmit={handleSubmit(UserInterfaceHelpers.setRightNavbar)}>
-                    <button>Right navbar</button>
-                </form>
-            </div>
-
-            <h3>Single setting</h3>
-            <div>
-                <form onSubmit={handleSubmit(setSingleCssValueForm)} style={{display: "flex", justifyContent: "center", columnGap: "1em"}}>
-                    <input type={"text"} {...register('cssParameterName')}/>
-                    <input type={"text"} {...register('cssParameterValue')}/>
-                    <button>Edit single css parameter</button>
-                </form>
-            </div>
+            {/*<h3>Settigs</h3>*/}
+            {/*<form onSubmit={handleSubmit(tailorUserInterfaceFake)}>*/}
+            {/*    <label>*/}
+            {/*        Setting name:&nbsp;&nbsp;*/}
+            {/*    </label>*/}
+            {/*    <input type={"text"} {...register('setting')}/>*/}
+            {/*    &nbsp;&nbsp;*/}
+            {/*    <button>Get setting</button>*/}
+            {/*</form>*/}
+            
+            {/*<h3>Navbar</h3>*/}
+            {/*<div style={{display: "flex", justifyContent: "center", columnGap: "1em"}}>*/}
+            {/*    <form onSubmit={handleSubmit(UserInterfaceHelpers.setTopNavbar)}>*/}
+            {/*        <button>Top navbar</button>*/}
+            {/*    </form>*/}
+            {/*    <form onSubmit={handleSubmit(UserInterfaceHelpers.setLeftNavbar)}>*/}
+            {/*        <button>Left navbar</button>*/}
+            {/*    </form>*/}
+            {/*    <form onSubmit={handleSubmit(UserInterfaceHelpers.setRightNavbar)}>*/}
+            {/*        <button>Right navbar</button>*/}
+            {/*    </form>*/}
+            {/*</div>*/}
+            
+            {/*<h3>Single setting</h3>*/}
+            {/*<div>*/}
+            {/*    <form onSubmit={handleSubmit(setSingleCssValueForm)} style={{display: "flex", justifyContent: "center", columnGap: "1em"}}>*/}
+            {/*        <input type={"text"} {...register('cssParameterName')}/>*/}
+            {/*        <input type={"text"} {...register('cssParameterValue')}/>*/}
+            {/*        <button>Edit single css parameter</button>*/}
+            {/*    </form>*/}
+            {/*</div>*/}
 
             <h3>Reset</h3>
             <form onSubmit={handleSubmit(UserInterfaceHelpers.restoreDefaultSettings)}>

@@ -133,17 +133,6 @@ public class PersonalizationController : ControllerBase
 
         }
         
-        // bg-color
-
-        // header-color
-        
-        // text-color
-        
-        // complementary-color
-        
-        // font-family
-        
-        // font-size-multiplier
         switch (model.Eyesight)
         {
             case "worst":
