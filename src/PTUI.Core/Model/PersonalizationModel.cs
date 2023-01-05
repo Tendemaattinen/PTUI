@@ -12,4 +12,5 @@ public class PersonalizationModel
     public string Element { get; set; }
     public string ColorCharacter { get; set; }
     public string Eyesight { get; set; }
+    public string Font { get; set; }
 }

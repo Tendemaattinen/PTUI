@@ -1,8 +1,9 @@
-﻿import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+﻿import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import axios from "axios";
 import { UserInfo } from '../interfaces/UserInfo'
 import { UserInterfaceHelpers } from '../helpers/UserInterfaceHelpers'
 import {stat} from "fs";
+import {useAppSelector} from "../hooks/hooks";
 
 const initialState = {
     loading: false,
@@ -10,6 +11,7 @@ const initialState = {
     userToken: null as (null | string),
     error: null as (null | string),
     success: false,
+    preferenceType: 0 as number
 }
 
 const userSlice = createSlice({
@@ -28,6 +30,18 @@ const userSlice = createSlice({
             
             // TODO: Async?
             UserInterfaceHelpers.restoreDefaultSettings();
+        },
+        changePreference: (state, action: PayloadAction<number>) => {
+            state.preferenceType = action.payload;
+            // TODO: Change UI
+            // let data = UserInterfaceHelpers.getUserSettings(
+            //     localStorage.getItem('userId') ?? "",
+            //     state.preferenceType);
+            // UserInterfaceHelpers.setUserStyle(data);
+
+            // TODO: Change nav bar
+
+            // TODO: Change page selector
         }
     }, 
     extraReducers: (builder) => {
@@ -60,11 +74,12 @@ const userSlice = createSlice({
                 //state.userInfo = payload;
                 //state.userToken = payload.userToken;
             }
-            // TODO: Api call to get settings
-            //const settings: string = fakeApiCall();
             
-            // TODO: Set settings to localstorage
-            //setSettings(settings);
+            // TODO: Api call to get settings
+            // TODO: Test
+            // let data = UserInterfaceHelpers.getUserSettings(
+            //     localStorage.getItem('userId') ?? "",state.preference.preferenceType);
+            // UserInterfaceHelpers.setUserStyle(data);
             
             // TODO: Do i need use redux store in navbar?
             
@@ -142,5 +157,5 @@ export const userLogin = createAsyncThunk<UserInfo, {username: string, password:
     }
 )
 
-export const { logout } = userSlice.actions
+export const { logout, changePreference } = userSlice.actions
 export default userSlice.reducer

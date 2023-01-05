@@ -6,6 +6,7 @@ using PTUI.Core.Model;
 using Microsoft.AspNet.Identity;
 using Microsoft.EntityFrameworkCore;
 using PTUI.Core.Context;
+using PTUI.Core.Enums;
 
 namespace PTUI.Api.Controllers;
 
@@ -166,9 +167,33 @@ public class PersonalizationController : ControllerBase
                         .Values.FirstOrDefault(y => y.Name.ToLower() == "default").Value;
                 break;
         }
+        
+        // TODO: navbar logic and page selector login
+        
+        // TODO: Here set bad, average and good scenarios
+        // How calculation is done (matrix?)
 
+        var userId = await _userService.GetUserIdByNameAsync(model.Username);
+        
         // Save user settings
-        await _userService.SetUserPreferences(User.Identity.GetUserId(), JsonSerializer.Serialize(settingsObject), 0);
+        // Good
+        await _userService.SetUserPreferences(userId, 
+            JsonSerializer.Serialize(settingsObject), 
+            0,
+            UserPreferenceFit.Good,
+            "arrows");
+        // Average
+        await _userService.SetUserPreferences(userId,
+            JsonSerializer.Serialize(settingsObject), 
+            0,
+            UserPreferenceFit.Average,
+            "numbers");
+        // Bad
+        await _userService.SetUserPreferences(userId,
+            JsonSerializer.Serialize(settingsObject), 
+            0,
+            UserPreferenceFit.Bad,
+            "commandline");
         
         return Ok(settingsObject);
     }

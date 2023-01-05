@@ -14,4 +14,6 @@ public class UserPreference
     public string PreferencesJson { get; set; }
     public NavbarLocation NavbarLocation { get; set; }
     public int Version { get; set; }
+    public UserPreferenceFit Fit { get; set; }
+    public string PageSelector { get; set; }
 }

@@ -1,35 +1,155 @@
-﻿import React from 'react';
+﻿import React, {ChangeEventHandler, useEffect, useState} from 'react';
 import forest1 from '../../assets/images/example/forest-1.jpg'
 import mountains1 from '../../assets/images/example/mountains-1.jpg'
 import road1 from '../../assets/images/example/road-1.jpg'
 import sunset1 from '../../assets/images/example/sunset-1.jpg'
 
-function ExampleContent() {
+import ContentPage from '../ContentPage/ContentPage'
+import Example from "../Example/Example";
 
+import {FieldValues, useForm} from "react-hook-form";
+import Editor from "../Editor/Editor";
+
+function ExampleContent() {
+    const [currentPage, setCurrentPage] = useState(1);
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    let maxPagesNumber: number = 4;
+    
+    useEffect(() => {
+        (document.getElementById('changePageRadio' + currentPage) as HTMLInputElement).checked = true;
+        (document.getElementById('pageSelectorDropdown') as HTMLSelectElement)
+            .selectedIndex = currentPage - 1;
+    }, [currentPage])
+    
+    const changePage = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+    }
+    
+    const nextPage = () => {
+        if (currentPage < maxPagesNumber) {
+            setCurrentPage(currentPage + 1);
+        }
+    }
+    
+    const previousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);    
+        }
+    }
+    
+    const changePageDropDown = () => {
+        let pageNumber = (document.getElementById("pageSelectorDropdown") as HTMLInputElement)?.value ?? "1";
+        setCurrentPage(Number(pageNumber));
+    }
+    
+    const submitConsoleForm = (formData: FieldValues) => {
+        let input: string = formData.consoleInput;
+        switch (input) {
+            case '1':
+            case 'one':
+            case 'first':
+                changePage(1);
+                break;
+            case '2':
+            case 'two':
+            case 'second':
+                changePage(2);
+                break;
+            case '3':
+            case 'three':
+            case 'third':
+                changePage(3);
+                break;
+            case '4':
+            case 'four':
+            case 'fourth':
+                changePage(3);
+                break;
+            case 'previous':
+                previousPage();
+                break;
+            case 'next':
+                nextPage();
+                break;
+            case 'last':
+                changePage(maxPagesNumber);
+                break;
+            default:
+                // TODO: Invalid input
+                break;
+        }
+    }
+    
+    const renderContentPage = () => {
+        switch (currentPage) {
+            case 1:
+                return <ContentPage/>
+            case 2:
+                return <Example/>
+            case 3:
+                return <ContentPage/>
+            case 4:
+                return <Editor/>
+            default:
+                return <ContentPage/>
+        }
+    }
+    
     return(
-        <>
-                <h1>Example Content Page</h1>
-                <h2>Lorem ipsum</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vulputate fringilla lorem eu consectetur. Donec in finibus turpis, a aliquam est. Curabitur laoreet dignissim massa nec molestie. Praesent magna arcu, sagittis congue volutpat in, vestibulum nec mi. Cras hendrerit elementum felis, ac tristique dui pharetra ut. Etiam vel purus quis ex tincidunt tincidunt ac facilisis eros. Ut sed dictum velit, molestie efficitur magna. Suspendisse ut diam massa.</p>
-                <p>Morbi tincidunt molestie nulla et placerat. In volutpat sollicitudin ipsum vitae faucibus. Proin consequat purus quis tellus pellentesque egestas. Cras eget aliquam lectus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam rhoncus ipsum arcu, at efficitur enim efficitur et. Mauris commodo sapien vitae ex tincidunt elementum. Aliquam dictum arcu vitae malesuada fringilla. Suspendisse in leo nulla. Donec lorem odio, dapibus at fermentum non, tempor ac ligula. Duis elementum quis sapien quis semper. Vivamus feugiat augue massa, eu mattis enim condimentum sed. Nullam bibendum viverra tempus. Praesent consequat consectetur enim, ac congue purus vehicula eget. Nulla ante eros, lobortis vitae eleifend quis, pellentesque at augue.</p>
-                <img src={forest1} alt={"Forest"}/>
-                <p>Pellentesque interdum metus mauris, id sagittis mi porttitor eu. Nullam aliquam quis libero sed maximus. Nunc dolor sem, sagittis quis aliquam quis, aliquet eget nulla. Donec bibendum leo sit amet gravida tincidunt. Nam eu ipsum orci. Nunc euismod auctor ex at euismod. Nam suscipit hendrerit ligula, eu sagittis libero vehicula egestas. Aliquam eget volutpat neque. Vestibulum quis leo nec nibh tempor pellentesque eget at tortor. Curabitur sed ultricies arcu, nec bibendum felis. Curabitur eleifend elit sed purus sagittis sagittis. Cras lobortis purus nisi, eu auctor odio faucibus eu. Nam auctor bibendum justo, at tempus lectus elementum aliquet.</p>
-                <p>Vivamus molestie, ligula non aliquet ultricies, odio neque tempus est, in fermentum neque ipsum quis lorem. Donec consequat mi eget metus sodales, non pretium quam gravida. Aenean quis tempus risus. Aliquam massa odio, egestas vitae efficitur ac, tincidunt id sem. Etiam vel finibus magna. Quisque eleifend enim sed tincidunt sollicitudin. Aenean sed nulla sem. Quisque feugiat ipsum id nisi auctor, eget imperdiet justo tincidunt. Maecenas diam felis, hendrerit ac turpis nec, pellentesque pretium enim. Proin consequat ultricies nisi, ac convallis ante fermentum eget. Cras rhoncus vel dui in consequat. Suspendisse ac sem vitae velit pulvinar ultricies sit amet semper diam. Nunc pharetra mi id lobortis efficitur. Nam dignissim vulputate lectus, quis blandit sem posuere vitae. Sed neque urna, luctus congue elementum eu, cursus nec ante.</p>
-                <img src={mountains1} alt={"Mountains"}/>
-                <h3>Lorem ipsum</h3>
-                <p>Etiam massa ante, maximus ut augue eget, molestie ullamcorper nunc. Aliquam nisi arcu, auctor et velit a, faucibus eleifend erat. Suspendisse consequat hendrerit aliquet. Mauris ut libero justo. Suspendisse vel porttitor lacus, quis semper nisl. Sed congue diam felis, rhoncus aliquam mauris consequat nec. Maecenas vehicula faucibus leo, nec tristique justo porttitor at. Donec nec vestibulum nisi. Duis tristique mi quis vestibulum sagittis.</p>
-                <p>Maecenas nec quam pulvinar, congue risus nec, venenatis augue. Cras a odio neque. Nulla eget orci aliquet, ullamcorper orci eu, imperdiet sem. Pellentesque ipsum sem, mollis sed nibh at, cursus placerat elit. Aliquam quis laoreet lorem. Donec euismod tellus vel pretium mollis. Cras sit amet aliquet nisi, pellentesque pretium libero. In sit amet leo sollicitudin, gravida nisi sit amet, tincidunt turpis. Phasellus tellus risus, pretium vitae rhoncus nec, pulvinar eu purus.</p>
-                <p>Vivamus egestas metus vitae sodales vulputate. Cras ornare neque facilisis placerat porttitor. Mauris in nisi in metus lacinia interdum. Duis et cursus velit. Aliquam fringilla non tellus sed pharetra. Suspendisse eu massa blandit, vulputate lectus in, mollis nulla. Nam congue finibus ante, sit amet scelerisque nunc suscipit id. Cras leo sapien, suscipit ac risus a, cursus lobortis nunc. Nullam pulvinar leo risus, eu iaculis nisl rhoncus eget. Mauris hendrerit sem mi, in condimentum risus tincidunt non. Curabitur facilisis vel leo tempus facilisis. Curabitur sed efficitur leo. Phasellus ac orci sit amet magna porttitor gravida eleifend sed lectus. Nunc ullamcorper, diam dapibus sollicitudin venenatis, elit nulla finibus felis, ut dictum dui quam sed ipsum.</p>
-                <p>Phasellus erat ante, ornare at lorem rhoncus, gravida suscipit metus. Nunc hendrerit, enim vitae vehicula luctus, felis massa egestas velit, ac rutrum est neque vel lacus. Mauris sit amet diam et felis placerat ullamcorper fermentum in velit. Quisque commodo fermentum sapien eu posuere. Maecenas sit amet bibendum ex, ut fringilla erat. Suspendisse accumsan metus sed orci lobortis porta. Duis tempus mauris non mauris eleifend, sed aliquam eros sagittis. Pellentesque dignissim gravida sem id fringilla. Nulla turpis sapien, porttitor sit amet feugiat consequat, imperdiet et magna. Duis suscipit fringilla felis, at tristique neque.</p>
-                <img src={road1} alt={"Road"}/>
-                <h3>Lorem ipsum</h3>
-                <p>Proin volutpat scelerisque gravida. Vestibulum facilisis convallis eros a dictum. Phasellus faucibus nisi ut est elementum mattis id quis nibh. Phasellus mollis vel arcu non iaculis. Fusce odio elit, posuere nec lacinia non, faucibus non ligula. Cras pellentesque cursus gravida. Aliquam dignissim ultricies lacus, in vulputate turpis aliquet id. Sed et lorem ac ante dapibus cursus ut eget dolor.</p>
-                <p>Nulla placerat sit amet ex ut tincidunt. Praesent dictum dui ut mauris mollis, sed dictum massa auctor. In hac habitasse platea dictumst. Donec egestas augue eget metus auctor, et egestas libero dapibus. Aliquam euismod non ante eget placerat. Nulla viverra, eros ac elementum accumsan, odio justo molestie odio, id venenatis diam eros eget justo. Nulla ligula nisl, gravida non nisi et, semper pharetra arcu. Nam non purus varius, egestas tellus sit amet, hendrerit lorem. Nam convallis in velit at pretium. In tristique accumsan tellus ac hendrerit. Mauris et vulputate velit. Curabitur scelerisque erat tortor, nec aliquet odio lacinia vel. Sed at mattis sapien, aliquam sodales augue. Etiam consectetur in velit in ultrices. Nulla condimentum ante a mattis pellentesque.</p>
-                <h2>Lorem ipsum</h2>
-                <p>Aenean scelerisque nunc eget eros commodo feugiat. Nam rutrum lectus id elit condimentum, sed efficitur erat efficitur. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Morbi eget lacinia leo. Quisque pretium nisl justo, consectetur ultrices nibh rutrum condimentum. Proin eu felis nec augue blandit iaculis suscipit vel odio. Phasellus eu semper metus, id molestie massa. Phasellus vitae euismod velit, a vestibulum magna.</p>
-                <p>Quisque eu arcu convallis, lacinia quam vitae, finibus arcu. Donec malesuada, arcu at ullamcorper pharetra, sapien est rutrum nibh, at feugiat augue est ac sapien. Fusce elementum accumsan elit, at fermentum quam. Praesent at augue sodales, fermentum nunc nec, elementum libero. Vestibulum vel sem nec risus eleifend fermentum eu vitae nisl. Mauris vel sollicitudin risus. Sed mollis sed leo sed feugiat. Donec luctus quam eu dignissim elementum. Donec gravida, mauris vel consequat volutpat, lectus risus semper dui, non commodo nulla ex sed nulla. Sed viverra aliquet nunc a vulputate. Maecenas nec odio posuere, eleifend libero lacinia, molestie mi. Suspendisse potenti. Phasellus dignissim a arcu at imperdiet. Pellentesque blandit massa elit, eu porttitor ante mollis a.</p>
-                <img src={sunset1} alt={"Sunset"}/>
-        </>
+        <div>
+            <div>
+                {Array.from(Array(maxPagesNumber).keys()).map(x => ++x).map(pageNumber => {
+                    return (<button onClick={() => changePage(pageNumber)}>Page {pageNumber}</button>)
+                })}
+            </div>
+            
+            <div>
+                <button onClick={() => previousPage()}>Previous</button>
+                <button onClick={() => nextPage()}>Next</button>
+            </div>
+            
+            <div>
+                <select onChange={() => changePageDropDown()} id={"pageSelectorDropdown"}>
+                    {Array.from(Array(maxPagesNumber).keys()).map(x => ++x).map(item => {
+                        return (<option key={item} value={item}>{item}</option> )
+                    })}
+                </select>
+            </div>
+            
+            <div>
+                <form onSubmit={handleSubmit(submitConsoleForm)}>
+                    <input type={'text'} {...register('consoleInput')}></input>
+                    <button>Submit</button>
+                </form>
+            </div>
+            
+            <div>
+                <p>Radio button here</p>
+                <form>
+                    <label htmlFor={'changePageRadio1'}>
+                        <input id={'changePageRadio1'} name={'changePageRadio'} type={"radio"} value={1} 
+                               onClick={() => changePage(1)}/>
+                        Page 1
+                    </label>
+                    <label htmlFor={'changePageRadio2'}>
+                        <input id={'changePageRadio2'} name={'changePageRadio'} type={"radio"} value={2} 
+                               onClick={() => changePage(2)}/>
+                        Page 2
+                    </label>
+                    <label htmlFor={'changePageRadio3'}>
+                        <input id={'changePageRadio3'} name={'changePageRadio'} type={"radio"} value={3} 
+                               onClick={() => changePage(3)}/>
+                        Page 3
+                    </label>
+                    <label htmlFor={'changePageRadio4'}>
+                        <input id={'changePageRadio4'} name={'changePageRadio'} type={"radio"} value={4}
+                               onClick={() => changePage(4)}/>
+                        Page 4
+                    </label>
+                </form>
+            </div>
+            {renderContentPage()}
+        </div>
     );
 }
 

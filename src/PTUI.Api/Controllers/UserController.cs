@@ -7,6 +7,7 @@ using PTUI.Core.Entities;
 using PTUI.Core.Model;
 using PTUI.Core.Models;
 using Microsoft.AspNet.Identity;
+using PTUI.Core.Enums;
 
 namespace PTUI.Api.Controllers;
 
@@ -124,28 +125,31 @@ public class UserController : ControllerBase
 
     [HttpGet("getUserPreferences")]
     [Authorize]
-    public async Task<IActionResult> GetUserPreferencesAsync(string tokenUserId)
+    public async Task<IActionResult> GetUserPreferencesAsync(string tokenUserId, int fit = (int)UserPreferenceFit.Good)
     {
-        var userId = User.Identity.GetUserId();
-        if (!_userService.IsUserSameAsInToken(userId, tokenUserId))
-        {
-            return Unauthorized();
-        }
+        //TODO: Not working
+        // var userId = User.Identity.GetUserId();
+        // if (!_userService.IsUserSameAsInToken(userId, tokenUserId))
+        // {
+        //     return Unauthorized();
+        // }
         
-        return Ok(await _userService.GetUserPreferences(tokenUserId));
+        return Ok(await _userService.GetUserPreferences(tokenUserId, fit));
     }
     
     [HttpPost("setUserPreferences")]
     [Authorize]
     public async Task<IActionResult> SetUserPreferencesAsync([FromBody] UserPreferencesModel preferencesModel)
     {
-        var userId = User.Identity.GetUserId();
-        if (!_userService.IsUserSameAsInToken(userId, preferencesModel.UserId))
-        {
-            return Unauthorized();
-        }
-
-        if (await _userService.SetUserPreferences(preferencesModel.UserId, preferencesModel.Preferences, preferencesModel.NavbarLocation))
+        // var userId = User.Identity.GetUserId();
+        // if (!_userService.IsUserSameAsInToken(userId, preferencesModel.UserId))
+        // {
+        //     return Unauthorized();
+        // }
+        
+        // TODO: Do this need more custom logic, not hardcoded values?
+        if (await _userService.SetUserPreferences(preferencesModel.UserId, preferencesModel.Preferences,
+                preferencesModel.NavbarLocation, UserPreferenceFit.Custom, "numbers"))
         {
             return Ok(preferencesModel);
         }
@@ -164,9 +168,34 @@ public class UserController : ControllerBase
             return BadRequest("Invalid rating");
         }
 
-        await _userService.SaveRating(ratingModel.UserId, rating, ratingModel.Reason);
+        await _userService.SaveRating(ratingModel.UserId, rating, ratingModel.Reason, ratingModel.Fit);
         return Ok();
     }
 
+    [HttpGet("navbarPreference")]
+    [Authorize]
+    public async Task<IActionResult> GetNavBarLocationPreference(string tokenUserId, int fit = (int)UserPreferenceFit.Good)
+    {
+        // var userId = User.Identity.GetUserId();
+        // if (!_userService.IsUserSameAsInToken(userId, tokenUserId))
+        // {
+        //     return Unauthorized();
+        // }
+        
+        return Ok(_userService.GetNavBarLocationPreference(tokenUserId, (UserPreferenceFit)fit).ToString());
+    }
+    
+    [HttpGet("pageSelectorPreference")]
+    [Authorize]
+    public async Task<IActionResult> GetPageSelectorPreference(string tokenUserId, int fit = (int)UserPreferenceFit.Good)
+    {
+        // var userId = User.Identity.GetUserId();
+        // if (!_userService.IsUserSameAsInToken(userId, tokenUserId))
+        // {
+        //     return Unauthorized();
+        // }
+        
+        return Ok(_userService.GetPageSelectorPreference(tokenUserId, (UserPreferenceFit)fit));
+    }
 
 }

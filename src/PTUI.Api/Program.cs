@@ -89,10 +89,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     
     // Seed database
-    using var scope = app.Services.CreateScope();
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    var a = await DbInitializer.InitializeSettings(context);
-    var s = await DbInitializer.InitializeSettingValues(context);
+    // Moved to initialization_script.sql script
+    
+    // using var scope = app.Services.CreateScope();
+    // var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    // var a = await DbInitializer.InitializeSettings(context);
+    // var s = await DbInitializer.InitializeSettingValues(context);
 }
 
 // Configure CORS policy

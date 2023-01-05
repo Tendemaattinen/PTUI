@@ -15,4 +15,5 @@ public class UserRating
     public string Reason { get; set; }
     public DateTime Timestamp { get; set; }
     public int UserPreferenceVersion { get; set; }
+    public int UserPreferenceFit { get; set; }
 }

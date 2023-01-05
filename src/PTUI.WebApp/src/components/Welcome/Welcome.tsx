@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import {FieldValues, useForm} from "react-hook-form";
-import {getSettingsFake, testApiCall, getUserSettings} from "./Welcome.module";
+import {getSettingsFake, testApiCall} from "./Welcome.module";
 import UserInterfaceHelpers from "../../helpers/UserInterfaceHelpers";
 
 import globalStyle from '../../assets/styles/globalStyle.module.scss';
@@ -17,7 +17,10 @@ function Welcome() {
     const tailorUserInterface = async (email: string) => {
         
         // TODO: Real call to backend
-        let settingsJson: string = await getUserSettings();
+        let settingsJson = await UserInterfaceHelpers.getUserSettings(
+            localStorage.getItem('userId') ?? "",
+            1);
+        //let settingsJson: string = await getUserSettings();
         let settings: object = JSON.parse(settingsJson);
         await UserInterfaceHelpers.setCssSettingsFromObject(settings);
     }

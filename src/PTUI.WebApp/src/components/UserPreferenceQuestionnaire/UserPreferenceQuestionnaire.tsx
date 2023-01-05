@@ -8,9 +8,14 @@ import axios from "axios";
 import {SettingType} from "../../enums/SettingType";
 import {Setting} from "../../interfaces/Setting";
 import {SettingValue} from "../../interfaces/SettingValue";
+import {useAppSelector} from "../../hooks/hooks";
+import Review from "../Review/Review";
+import VersionSelector from "../VersioSelector/VersionSelector";
 
 function UserPreferenceQuestionnaire() {
 
+    const { preferenceType } = useAppSelector((state) => state.preference)
+    
     const { register, handleSubmit, formState: { errors } } = useForm();
     
     const setUserStyle = async (formData: FieldValues) => {
@@ -21,33 +26,6 @@ function UserPreferenceQuestionnaire() {
         
         await UserInterfaceHelpers.setUserStyle(style);
         await UserInterfaceHelpers.setNavbarLocation(formData.navbarLocation);
-    }
-    
-    const saveUserSettings = async (styleSettings: string, navbarLocation: string) => {
-        let userId = localStorage.getItem('userId');
-
-        if (userId !== null) {
-            try {
-                const url: string = process.env.REACT_APP_API_BASE_URL + "setuserpreferences";
-                const content: string = JSON.stringify({userId: userId, preferences: styleSettings, navbarLocation: navbarLocation })
-                // API call
-                await axios.post(url, content, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                .then(function (response) {
-                    alert("Settings save");
-                })
-                .catch(function(error) {
-                    console.log("Error: " + error);
-                    alert("Saving settings failed, error: " + error.respose)
-                })
-            }
-            catch (error: unknown) {
-                // TODO: Error
-            }
-        }
     }
     
     const createStyleJson = (formData: FieldValues) => {
@@ -134,39 +112,18 @@ function UserPreferenceQuestionnaire() {
             return await getSettingsFromDB();
         }
         fetchData();
-    }, [count])
-    
+    }, [count]);
     
 
     return(
         <div id={upqStyle.upqComponent}>
             <h1>Preference questionnaire</h1>
             <h2>Info</h2>
-            <p>Create some kind of info box here. Accordion would be nice solution.</p>
-            <div>
-                <h2>Rating component</h2>
-                <form onSubmit={handleSubmit(saveUserRating)}>
-                    <div>
-                        <div>
-                            <label>Rate current version:&nbsp;</label>
-                            <select {...register('rating')}>
-                                {Array.from(Array(10).keys()).map(item => {
-                                    return (<option key={item} value={item}>{item}</option> )
-                                })}
-                            </select>
-                        </div>
-                        <div>
-                            <label>Reason for rating:&nbsp;</label>
-                            <div>
-                                <textarea className={upqStyle.reasonRatingTextArea} {...register('ratingReason')} rows={4} cols={50}></textarea>
-                            </div>
-                        </div>
-                        <div>
-                            <input type={"submit"} value={"Submit"}/>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            <p>Create some kind of info box here.</p>
+            
+            <VersionSelector/>
+            
+            <Review/>
             
             <h2>Style</h2>
             <form onSubmit={handleSubmit(setUserStyle)} id={upqStyle.upqStyleForm}>
@@ -178,9 +135,7 @@ function UserPreferenceQuestionnaire() {
                             return (<option key={item?.value ?? ""} value={item?.value ?? ""}>{item?.name ?? ""}</option> )
                         })}
                     </select>
-
                 </div>
-                
                 
                 <h3>Complementary color</h3>
                 <div className={upqStyle.upqStyleFormDivRow}>

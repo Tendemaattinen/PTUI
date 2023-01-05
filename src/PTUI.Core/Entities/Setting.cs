@@ -16,11 +16,14 @@ public class Setting
     public SettingType Type { get; set; }
     public IList<SettingValue> Values { get; set; }
 
-    public Setting(string name, string definition, SettingType type)
+    public string DefaultValue { get; set; }
+
+    public Setting(string name, string definition, SettingType type, string defaultValue)
     {
         Id = new Guid();
         Name = name;
         Definition = definition;
         Type = type;
+        DefaultValue = defaultValue;
     }
 }

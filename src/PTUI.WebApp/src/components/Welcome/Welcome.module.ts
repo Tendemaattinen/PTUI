@@ -19,28 +19,6 @@ export const testApiCall = async () => {
         })
 }
 
-export const getUserSettings = async (userId: string = localStorage.getItem('userId') ?? "") => {
-    const url: string = formUrlAddress("getUserPreferences");
-    let settings : string = ""
-    axios.get(url, {
-        headers: {
-            'Authorization': "Bearer " + localStorage.getItem("token") ?? "",
-            'Content-Type': 'application/json',
-        },
-        params: {
-            tokenUserId: userId,
-        }})
-        .then(function (response) {
-            alert(response);
-            settings = response.data;
-        })
-        .catch(function(error) {
-            alert("Getting user settings failed");
-            console.log("Error: " + error);
-        })
-    return settings
-}
-
 const formUrlAddress = (apiName: string, baseUrl: string = process.env.REACT_APP_API_BASE_URL?.toString() ?? "") => {
     return baseUrl + apiName;
 }

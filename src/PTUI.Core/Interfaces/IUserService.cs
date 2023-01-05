@@ -1,4 +1,5 @@
 ﻿using PTUI.Core.Entities;
+using PTUI.Core.Enums;
 using PTUI.Core.Model;
 using PTUI.Core.Models;
 
@@ -15,8 +16,12 @@ public interface IUserService
     bool RevokeToken(string token);
     ApplicationUser GetById(string id);
 
-    Task<string> GetUserPreferences(string id);
-    Task <bool> SetUserPreferences(string userId, string preferences, int navbarLocation);
+    Task<string> GetUserPreferences(string id, int fit = (int)UserPreferenceFit.Good);
+    Task <bool> SetUserPreferences(string userId, string preferences, int navbarLocation, 
+        UserPreferenceFit fit, string pageSelector);
     bool IsUserSameAsInToken(string? userId, string userIdInToken);
-    Task<bool> SaveRating(string userId, int rating, string reason);
+    Task<bool> SaveRating(string userId, int rating, string reason, UserPreferenceFit fit);
+    NavbarLocation GetNavBarLocationPreference(string userId, UserPreferenceFit fit);
+    string GetPageSelectorPreference(string userId, UserPreferenceFit fit);
+    Task<string> GetUserIdByNameAsync(string username);
 }

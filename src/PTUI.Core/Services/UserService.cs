@@ -3,6 +3,8 @@ using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -236,22 +238,51 @@ public class UserService : IUserService
             return _context.Users.Find(id);
         }
 
-        public async Task<string> GetUserPreferences(string id)
+        public async Task<string> GetUserIdByNameAsync(string username)
         {
-            return _context.UserPreferences.Where(x => x.UserId == id)
-                ?.OrderByDescending(y => y.Version)
-                .FirstOrDefault()
-                ?.PreferencesJson ?? "{}";
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == username);
+            return user.Id;
         }
-        
-        public async Task<bool> SetUserPreferences(string userId, string preferences, int navbarLocation)
+
+        public async Task<string> GetUserPreferences(string id, int fit = (int)UserPreferenceFit.Good) 
+        {
+            if (fit == (int)UserPreferenceFit.Default)
+            {
+                return GetDefaultPreferences();
+            }
+            
+            var pref = _context.UserPreferences.Where(x => x.UserId == id)
+                ?.OrderByDescending(y => y.Version)
+                .Where(x => x.Fit == (UserPreferenceFit)fit)?.FirstOrDefault()
+                ?.PreferencesJson ?? "{}";
+
+            return pref;
+        }
+
+        private string GetDefaultPreferences()
+        {
+            var settingsObject = new JsonObject();
+            var settings = _context.Settings.Where(x => x.Type == (int)SettingType.Css);
+            foreach (var setting in settings)
+            {
+                settingsObject[setting.Name] = setting.DefaultValue;
+            }
+
+            return JsonSerializer.Serialize(settingsObject);
+
+        }
+
+        public async Task<bool> SetUserPreferences(string userId, string preferences, int navbarLocation, 
+            UserPreferenceFit fit, string pageSelector)
         {
             var userPreferences = new UserPreference
             {
                 UserId = userId,
                 PreferencesJson = preferences,
                 NavbarLocation = (NavbarLocation)navbarLocation,
-                Version = GetUserPreferencesMaxVersion(userId) + 1
+                Version = GetUserPreferencesMaxVersion(userId, fit) + 1,
+                Fit = fit,
+                PageSelector = pageSelector
             };
             
             try
@@ -277,7 +308,7 @@ public class UserService : IUserService
             return userId == userIdInToken;
         }
 
-        public async Task<bool> SaveRating(string userId, int rating, string reason)
+        public async Task<bool> SaveRating(string userId, int rating, string reason, UserPreferenceFit fit)
         {
             var userRating = new UserRating()
             {
@@ -286,7 +317,8 @@ public class UserService : IUserService
                 Rating = rating,
                 Reason = reason,
                 Timestamp = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
-                UserPreferenceVersion = GetUserPreferencesMaxVersion(userId)
+                UserPreferenceVersion = GetUserPreferencesMaxVersion(userId, fit),
+                UserPreferenceFit = (int)fit
             };
             
             try
@@ -301,12 +333,31 @@ public class UserService : IUserService
                 return false;
             }
         }
+        
+        private int GetUserPreferencesMaxVersion(string userId, UserPreferenceFit fit)
+        {
+            var preferences = _context.UserPreferences
+                .Where(x => x.ApplicationUser.Id == userId && x.Fit == fit).ToList();
+            
+            return preferences.Any() ? preferences.Max(x => x.Version) : 0;
+        }
 
-        private int GetUserPreferencesMaxVersion(string userId)
+        public NavbarLocation GetNavBarLocationPreference(string userId, UserPreferenceFit fit)
         {
             return _context.UserPreferences
-                .Where(x => x.ApplicationUser.Id == userId)
-                ?.Max(y => y.Version) ?? 0;
+                .FirstOrDefault(x => x.ApplicationUser.Id == userId
+                            && x.Fit == fit
+                            && x.Version == GetUserPreferencesMaxVersion(userId, fit))?
+                .NavbarLocation ?? NavbarLocation.Top;
+        }
+        
+        public string GetPageSelectorPreference(string userId, UserPreferenceFit fit)
+        {
+            return _context.UserPreferences
+                .FirstOrDefault(x => x.ApplicationUser.Id == userId
+                                     && x.Fit == fit
+                                     && x.Version == GetUserPreferencesMaxVersion(userId, fit))?
+                .PageSelector ?? "numbers";
         }
 }
 

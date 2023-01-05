@@ -1,6 +1,9 @@
 ﻿import globalStyle from "../assets/styles/globalStyle.module.scss";
+import axios from "axios";
+import {store} from '../stores/store';
 
 export class UserInterfaceHelpers {
+    
     static setCssValueOfElement = async (key: string, value: string, element: HTMLElement = document.querySelector(':root') ?? new HTMLElement()) => {
         element?.style.setProperty('--' + key, value);
     }
@@ -15,7 +18,7 @@ export class UserInterfaceHelpers {
         element.classList.remove(className);
     }
 
-    static setCssSettingsFromObject = async (settings: object) => {
+    static setCssSettingsFromObject = (settings: object) => {
         let elementRoot : HTMLElement = document.querySelector(':root') ?? new HTMLElement();
 
         Object.entries(settings).forEach(
@@ -69,7 +72,7 @@ export class UserInterfaceHelpers {
         await this.resetNavbar();
         await this.setTopNavbar();
         localStorage.removeItem(process.env.CSS_SETTINGS_LOCAL_VARIABLE_NAME?.toString() ?? "");
-        await this.setCssSettingsFromObject(JSON.parse(process.env.DEFAULT_CSS_VALUES?.toString() ?? ""));
+        this.setCssSettingsFromObject(JSON.parse(process.env.DEFAULT_CSS_VALUES?.toString() ?? ""));
     }
     
     private static resetNavbar = async () => {
@@ -77,25 +80,51 @@ export class UserInterfaceHelpers {
         await this.restoreNavbar()
     }
 
-    static setUserStyle = async (settingsJson: string) => {
+    static setUserStyle = (settingsJson: string) => {
         const cssSettingName: string = process.env.CSS_SETTINGS_LOCAL_VARIABLE_NAME?.toString() ?? ""
 
         // Set to local variables
-        await UserInterfaceHelpers.setAsLocalVariable(cssSettingName, settingsJson);
+        UserInterfaceHelpers.setAsLocalVariable(cssSettingName, settingsJson);
 
         // Read from local variables
-        let settingsLocalStorage = await UserInterfaceHelpers.getLocalVariable(cssSettingName) ?? "";
+        let settingsLocalStorage = UserInterfaceHelpers.getLocalVariable(cssSettingName) ?? "";
 
         let settings: object = JSON.parse(settingsLocalStorage);
-        await UserInterfaceHelpers.setCssSettingsFromObject(settings);
+        UserInterfaceHelpers.setCssSettingsFromObject(settings);
     }
 
-    private static getLocalVariable = async (key: string) => {
+    private static getLocalVariable = (key: string) => {
         return localStorage.getItem(key);
     }
 
-    private static setAsLocalVariable = async (key: string, value: string) => {
+    private static setAsLocalVariable = (key: string, value: string) => {
         localStorage.setItem(key, value);
+    }
+    
+    static getUserSettings = async (userId: string, preferenceFit: number) => {
+        const url: string = UserInterfaceHelpers.formUrlAddress("getUserPreferences");
+        let settings : string = "";
+        await axios.get(url, {
+            headers: {
+                'Authorization': "Bearer " + localStorage.getItem("token") ?? "",
+            },
+            params: {
+                tokenUserId: userId,
+                fit: preferenceFit
+            }})
+            .then(function (response) {
+                console.log(response.data);
+                settings = response.data;
+            })
+            .catch(function(error) {
+                alert("Getting user settings failed");
+                console.log("Error: " + error);
+            })
+        return settings;
+    }
+
+    private static formUrlAddress = (apiName: string, baseUrl: string = process.env.REACT_APP_API_BASE_URL?.toString() ?? "") => {
+        return baseUrl + apiName;
     }
 }
 

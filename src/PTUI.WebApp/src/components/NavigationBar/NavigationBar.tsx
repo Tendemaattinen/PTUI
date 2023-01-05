@@ -4,8 +4,9 @@ import { Link } from "react-router-dom";
 
 import { logout } from "../../reducers/userSlice"
 
-import navStyle from './NavigationBar.module.scss'
+import style from './NavigationBar.module.scss';
 import globalStyle from '../../assets/styles/globalStyle.module.scss';
+
 import {useAppDispatch, useAppSelector} from "../../hooks/hooks";
 
 function NavigationBar() {
@@ -29,6 +30,9 @@ function NavigationBar() {
     return (
         <>
             <div id={'navbar'} ref={navbarRef} className={`${globalStyle.navbar} ${globalStyle.topNavbar}`}>
+                <div className={style.navigationBarLogoDiv}>
+                    <p id={style.navigationBarLogo}>PTUI</p>
+                </div>
                 <nav>
                     <Link className={globalStyle.navbarLink} to="/">Welcome</Link>
                     <Link className={globalStyle.navbarLink} to="/editor">Editor</Link>

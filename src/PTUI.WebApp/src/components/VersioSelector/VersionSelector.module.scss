@@ -1,0 +1,10 @@
+#versionSelectorDiv {
+  display: flex;
+  flex-flow: column wrap;
+}
+
+#versionSelectorFormDiv {
+  label {
+    margin: 0.5em;
+  }
+}
