@@ -7,10 +7,23 @@ import Footer from "./components/Footer/Footer";
 
 import globalStyle from './assets/styles/globalStyle.module.scss';
 import UserInterfaceHelpers from "./helpers/UserInterfaceHelpers";
+import {useAppDispatch, useAppSelector} from "./hooks/hooks";
+
+import {logAfterRefresh} from "./reducers/userSlice";
+
 
 function App() {
 
+    const { userName, userToken } = useAppSelector((state) => state.user)
+
+    const dispatch = useAppDispatch();
+
     useEffect(() => {
+
+        if (!userToken && localStorage.getItem('token')) {
+            dispatch(logAfterRefresh());
+        }
+        
         const setCssSettings = async () => {
             let set = localStorage.getItem(process.env.CSS_SETTINGS_LOCAL_VARIABLE_NAME?.toString() ?? "");
             if (set) {

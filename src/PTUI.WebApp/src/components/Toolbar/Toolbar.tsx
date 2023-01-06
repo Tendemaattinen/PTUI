@@ -12,10 +12,10 @@ function Toolbar() {
     const toolbarRef = React.createRef<HTMLDivElement>();
 
     const dispatch = useAppDispatch();
-    const { userInfo, userToken } = useAppSelector((state) => state.user)
+    const { userName, userToken } = useAppSelector((state) => state.user)
 
     useEffect(() => {
-        if (userInfo) {
+        if (userName) {
             //dispatch(getUserDetails())
             const navbar = toolbarRef.current;
             if (navbar !== null) {
@@ -23,7 +23,7 @@ function Toolbar() {
                 style.backgroundColor = "red";
             }
         }
-    }, [userInfo, dispatch])
+    }, [userName, dispatch])
     
     return(
         <div className={`${toolbarStyle.toolbar2}`} ref={toolbarRef}>

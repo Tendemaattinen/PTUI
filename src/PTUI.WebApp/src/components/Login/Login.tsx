@@ -9,7 +9,7 @@ import styles from './Login.module.scss';
 import globalStyle from '../../assets/styles/globalStyle.module.scss';
 
 function Login() {
-    const { userInfo, loading, error } = useAppSelector((state) => state.user)
+    const { userName, loading, error } = useAppSelector((state) => state.user)
 
     const navigate = useNavigate()
     
@@ -23,10 +23,10 @@ function Login() {
     }
     
     useEffect(() => {
-        if (userInfo != null) {
+        if (userName != null) {
             navigate('/');
         }
-    }, [navigate, userInfo])
+    }, [navigate, userName])
     
     useEffect(() => {
         let errorMessageElement = document.getElementById("errorMessage") || undefined;

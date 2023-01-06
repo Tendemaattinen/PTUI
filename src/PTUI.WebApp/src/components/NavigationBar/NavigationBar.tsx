@@ -14,10 +14,10 @@ function NavigationBar() {
     const navbarRef = React.createRef<HTMLDivElement>();
     
     const dispatch = useAppDispatch();
-    const { userInfo, userToken } = useAppSelector((state) => state.user)
+    const { userName, userToken } = useAppSelector((state) => state.user)
     
     useEffect(() => {
-        if (userInfo) {
+        if (userName) {
             //dispatch(getUserDetails())
             const navbar = navbarRef.current;
             if (navbar !== null) {
@@ -25,7 +25,7 @@ function NavigationBar() {
                 //style.backgroundColor = "red";
             }
         }
-    }, [userInfo, dispatch])
+    }, [userName, dispatch])
     
     return (
         <>
@@ -43,11 +43,11 @@ function NavigationBar() {
                     {/*TODO: If user not done yet, then show*/}
                     <Link className={globalStyle.navbarLink} to="/userPersonalization">Personalization</Link>
                     {
-                        (userInfo?.username != null)
+                        (userName != null)
                             ?
                             <>
                                 <Link className={globalStyle.navbarLink} to="/userPreferenceQuestionnaire">Questionnaire</Link>
-                                <a href={"#"} className={globalStyle.navbarLink}>{userInfo.username}</a>
+                                <a href={"#"} className={globalStyle.navbarLink}>{userName}</a>
                                 <a href={"#"} className={globalStyle.navbarLink} onClick={() => dispatch(logout())}>Logout</a>
                             </>
                             :

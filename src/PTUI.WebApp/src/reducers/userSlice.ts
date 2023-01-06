@@ -7,8 +7,8 @@ import {useAppSelector} from "../hooks/hooks";
 
 const initialState = {
     loading: false,
-    userInfo: null as (null | UserInfo),
     userToken: null as (null | string),
+    userName: null as (null | string),
     error: null as (null | string),
     success: false,
     preferenceType: 0 as number
@@ -23,8 +23,8 @@ const userSlice = createSlice({
             localStorage.removeItem('token');
             localStorage.removeItem('userId');
             state.loading = false;
-            state.userInfo = null;
             state.userToken = null;
+            state.userName = null;
             state.error = null;
             state.success = false;
             
@@ -42,6 +42,10 @@ const userSlice = createSlice({
             // TODO: Change nav bar
 
             // TODO: Change page selector
+        },
+        logAfterRefresh: (state) => {
+            state.userToken = localStorage.getItem('token');
+            state.userName = localStorage.getItem('user');
         }
     }, 
     extraReducers: (builder) => {
@@ -69,8 +73,8 @@ const userSlice = createSlice({
         })
         builder.addCase(userLogin.fulfilled, (state, {payload}) => {
             state.loading = false;
-            if (payload.username != null) {
-                state.userInfo = payload;
+            if (payload != null) {
+                state.userName = payload;
                 //state.userInfo = payload;
                 //state.userToken = payload.userToken;
             }
@@ -125,10 +129,10 @@ export const registerUser = createAsyncThunk<string, { firstName: string, lastNa
     }
 )
 
-export const userLogin = createAsyncThunk<UserInfo, {username: string, password: string}, { rejectValue: string} >(
+export const userLogin = createAsyncThunk<string, {username: string, password: string}, { rejectValue: string} >(
     'user/login',
     async ({username, password}, thunkApi) => {
-        let user = new UserInfo(null, null);
+        let userName: string = "";
         try {
             const url: string = process.env.REACT_APP_API_BASE_URL + "token";
             const content: string = JSON.stringify({username: username, password: password})
@@ -144,7 +148,7 @@ export const userLogin = createAsyncThunk<UserInfo, {username: string, password:
                     localStorage.setItem('user', response.data.userName);
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('userId', response.data.userId);
-                    user = new UserInfo(response.data.userName, null);
+                    userName = response.data.userName;
                 })
                 .catch(function(error) {
                     throw thunkApi.rejectWithValue(error.response.data);
@@ -153,9 +157,9 @@ export const userLogin = createAsyncThunk<UserInfo, {username: string, password:
         catch (error: unknown) {
             throw thunkApi.rejectWithValue(JSON.stringify(error));
         }
-        return user;
+        return userName;
     }
 )
 
-export const { logout, changePreference } = userSlice.actions
+export const { logout, changePreference, logAfterRefresh } = userSlice.actions
 export default userSlice.reducer
