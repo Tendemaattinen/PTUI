@@ -113,7 +113,6 @@ export class UserInterfaceHelpers {
                 fit: preferenceFit
             }})
             .then(function (response) {
-                console.log(response.data);
                 settings = response.data;
             })
             .catch(function(error) {

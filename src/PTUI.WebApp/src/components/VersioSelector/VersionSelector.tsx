@@ -13,19 +13,21 @@ function VersionSelector() {
     
     useEffect(() => {
         (document.getElementById('preferenceTypeRadio' + preferenceType) as HTMLInputElement).checked = true;
+        
+        const changePreference = async () => {
+            let data = await UserInterfaceHelpers.getUserSettings(
+                localStorage.getItem('userId') ?? "",
+                preferenceType);
+            UserInterfaceHelpers.setUserStyle(JSON.stringify(data));
+            // TODO: Change nav bar
+            // TODO: Change page selector
+        }
+        changePreference();
+        
     }, [preferenceType]);
 
     const changePreferenceType = async (type: number) => {
         dispatch(changePreference(type));
-        console.log(preferenceType);
-        let data = await UserInterfaceHelpers.getUserSettings(
-            localStorage.getItem('userId') ?? "",
-            type);
-        console.log(data);
-        UserInterfaceHelpers.setUserStyle(JSON.stringify(data));
-        // TODO: Change nav bar
-        // TODO: Change page selector
-        
     }
     
     return (
@@ -33,23 +35,23 @@ function VersionSelector() {
             <h2>Choose version: (TODO: Better text)</h2>
             <form id={style.versionSelectorForm}>
                 <div id={style.versionSelectorFormDiv}>
-                    <label htmlFor={'preferenceTypeRadio0'}>
-                        <input id={'preferenceTypeRadio0'} name={'preferenceTypeRadio'} type={"radio"} value={4}
+                    <label htmlFor={'preferenceTypeRadio4'}>
+                        <input id={'preferenceTypeRadio4'} name={'preferenceTypeRadio'} type={"radio"} value={4}
                                onClick={() => changePreferenceType(4)}/>
                         &nbsp;Default
                     </label>
-                    <label htmlFor={'preferenceTypeRadio1'}>
-                        <input id={'preferenceTypeRadio1'} name={'preferenceTypeRadio'} type={"radio"} value={0}
+                    <label htmlFor={'preferenceTypeRadio0'}>
+                        <input id={'preferenceTypeRadio0'} name={'preferenceTypeRadio'} type={"radio"} value={0}
                                onClick={() => changePreferenceType(0)}/>
                         &nbsp;Version 1 (Bad)
                     </label>
-                    <label htmlFor={'preferenceTypeRadio2'}>
-                        <input id={'preferenceTypeRadio2'} name={'preferenceTypeRadio'} type={"radio"} value={1}
+                    <label htmlFor={'preferenceTypeRadio1'}>
+                        <input id={'preferenceTypeRadio1'} name={'preferenceTypeRadio'} type={"radio"} value={1}
                                onClick={() => changePreferenceType(1)}/>
                         &nbsp;Version 2 (Average)
                     </label>
-                    <label htmlFor={'preferenceTypeRadio3'}>
-                        <input id={'preferenceTypeRadio3'} name={'preferenceTypeRadio'} type={"radio"} value={2}
+                    <label htmlFor={'preferenceTypeRadio2'}>
+                        <input id={'preferenceTypeRadio2'} name={'preferenceTypeRadio'} type={"radio"} value={2}
                                onClick={() => changePreferenceType(2)}/>
                         &nbsp;Version 3 (Good)
                     </label>

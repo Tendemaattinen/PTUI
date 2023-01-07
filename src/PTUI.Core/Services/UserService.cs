@@ -277,6 +277,7 @@ public class UserService : IUserService
         {
             var userPreferences = new UserPreference
             {
+                Id = Guid.NewGuid(),
                 UserId = userId,
                 PreferencesJson = preferences,
                 NavbarLocation = (NavbarLocation)navbarLocation,

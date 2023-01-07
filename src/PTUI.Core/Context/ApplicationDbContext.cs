@@ -30,10 +30,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ApplicationUser>()
-            .HasOne(au => au.UserPreference)
-            .WithOne(up => up.ApplicationUser)
-            .HasForeignKey<UserPreference>(up => up.UserId);
+
+        modelBuilder.Entity<UserPreference>()
+            .HasOne(ur => ur.ApplicationUser)
+            .WithMany(au => au.UserPreferences)
+            .HasForeignKey(ur => ur.UserId);
         
         modelBuilder.Entity<UserRating>()
             .HasOne(ur => ur.ApplicationUser)
