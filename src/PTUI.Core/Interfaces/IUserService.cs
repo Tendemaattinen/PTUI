@@ -24,4 +24,7 @@ public interface IUserService
     NavbarLocation GetNavBarLocationPreference(string userId, UserPreferenceFit fit);
     string GetPageSelectorPreference(string userId, UserPreferenceFit fit);
     Task<string> GetUserIdByNameAsync(string username);
+    string GetComponentPreference(string userId, string component, UserPreferenceFit fit);
+    UserPreferenceFit GetUserPreferenceFit(string userId);
+    bool SetUserPreferenceFit(string userId, UserPreferenceFit fit);
 }

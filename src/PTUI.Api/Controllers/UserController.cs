@@ -123,20 +123,6 @@ public class UserController : ControllerBase
         };
     }
 
-    [HttpGet("getUserPreferences")]
-    [Authorize]
-    public async Task<IActionResult> GetUserPreferencesAsync(string tokenUserId, int fit = (int)UserPreferenceFit.Good)
-    {
-        //TODO: Not working
-        // var userId = User.Identity.GetUserId();
-        // if (!_userService.IsUserSameAsInToken(userId, tokenUserId))
-        // {
-        //     return Unauthorized();
-        // }
-        
-        return Ok(await _userService.GetUserPreferences(tokenUserId, fit));
-    }
-    
     [HttpPost("setUserPreferences")]
     [Authorize]
     public async Task<IActionResult> SetUserPreferencesAsync([FromBody] UserPreferencesModel preferencesModel)
@@ -172,9 +158,9 @@ public class UserController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("navbarPreference")]
+    [HttpGet("componentPreference")]
     [Authorize]
-    public async Task<IActionResult> GetNavBarLocationPreference(string tokenUserId, int fit = (int)UserPreferenceFit.Good)
+    public async Task<IActionResult> GetComponentPreference(string tokenUserId, string component, int fit = (int)UserPreferenceFit.Default)
     {
         // var userId = User.Identity.GetUserId();
         // if (!_userService.IsUserSameAsInToken(userId, tokenUserId))
@@ -182,20 +168,25 @@ public class UserController : ControllerBase
         //     return Unauthorized();
         // }
         
-        return Ok(_userService.GetNavBarLocationPreference(tokenUserId, (UserPreferenceFit)fit).ToString());
+        return Ok(_userService.GetComponentPreference(tokenUserId, component, (UserPreferenceFit)fit));
     }
     
-    [HttpGet("pageSelectorPreference")]
+    [HttpGet("preferenceFit")]
     [Authorize]
-    public async Task<IActionResult> GetPageSelectorPreference(string tokenUserId, int fit = (int)UserPreferenceFit.Good)
+    public async Task<IActionResult> GetPreferenceFit(string tokenUserId)
     {
-        // var userId = User.Identity.GetUserId();
-        // if (!_userService.IsUserSameAsInToken(userId, tokenUserId))
-        // {
-        //     return Unauthorized();
-        // }
-        
-        return Ok(_userService.GetPageSelectorPreference(tokenUserId, (UserPreferenceFit)fit));
+        return Ok(_userService.GetUserPreferenceFit(tokenUserId));
+    }
+    
+    [HttpGet("preferenceFit")]
+    [Authorize]
+    public async Task<IActionResult> SetPreferenceFit(string tokenUserId, int fit = (int)UserPreferenceFit.Default)
+    {
+        if (!_userService.SetUserPreferenceFit(tokenUserId, (UserPreferenceFit)fit))
+        {
+            return BadRequest();
+        }
+        return Ok();
     }
 
 }

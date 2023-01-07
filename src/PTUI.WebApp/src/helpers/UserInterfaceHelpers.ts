@@ -51,7 +51,7 @@ export class UserInterfaceHelpers {
     }
 
     static setNavbarLocation = async (navbarLocation: string) => {
-        switch (navbarLocation) {
+        switch (navbarLocation.toLowerCase()) {
             case 'top':
                 await this.setTopNavbar();
                 break;
@@ -100,26 +100,77 @@ export class UserInterfaceHelpers {
     private static setAsLocalVariable = (key: string, value: string) => {
         localStorage.setItem(key, value);
     }
-    
-    static getUserSettings = async (userId: string, preferenceFit: number) => {
-        const url: string = UserInterfaceHelpers.formUrlAddress("getUserPreferences");
-        let settings : string = "";
+
+    static getComponentPreference = async (userId: string, component: string, preferenceFit: number) => {
+        const url: string = UserInterfaceHelpers.formUrlAddress("componentPreference");
+        let componentPreference : string = "";
         await axios.get(url, {
             headers: {
                 'Authorization': "Bearer " + localStorage.getItem("token") ?? "",
             },
             params: {
                 tokenUserId: userId,
+                component: component,
                 fit: preferenceFit
             }})
             .then(function (response) {
-                settings = response.data;
+                componentPreference = response.data;
             })
             .catch(function(error) {
-                alert("Getting user settings failed");
-                console.log("Error: " + error);
+                alert("Getting " + component + " preference failed to error: " + error);
+                console.error(error);
             })
-        return settings;
+        return componentPreference;
+    }
+    
+    static setUserPreferencesFromDatabase = async (userId: string, preferenceType: number) => {
+        // CSS preference
+        let preferencesJson = await this.getComponentPreference(userId, 'style', preferenceType);
+        UserInterfaceHelpers.setUserStyle(JSON.stringify(preferencesJson));
+
+        // Navbar preference
+        let navbarLocationPreference = await this.getComponentPreference(userId, 'navbar', preferenceType);
+        await UserInterfaceHelpers.setNavbarLocation(navbarLocationPreference);
+
+        // Page selector preference
+        // TODO: Change page selector
+        let pageSelectorPreference = await this.getComponentPreference(userId, 'pageselector', preferenceType);
+    }
+    
+    static getUserPreferenceFit = async (userId: string) => {
+        const url: string = UserInterfaceHelpers.formUrlAddress("preferenceFit");
+        let preferenceFit : string = "";
+        await axios.get(url, {
+            headers: {
+                'Authorization': "Bearer " + localStorage.getItem("token") ?? "",
+            },
+            params: {
+                tokenUserId: userId,
+            }})
+            .then(function (response) {
+                preferenceFit = response.data;
+            })
+            .catch(function(error) {
+                alert("Getting preference fit failed to error: " + error);
+                console.error(error);
+            })
+        return preferenceFit;
+    }
+
+    static setUserPreferenceFit = async (userId: string, preferenceFit: number) => {
+        const url: string = UserInterfaceHelpers.formUrlAddress("preferenceFit");
+        const content: string = JSON.stringify({tokenUserId: userId, fit: preferenceFit})
+        await axios.post(url, content, {
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(function (response) {
+                console.log("setUserPreferenceFit success");
+            })
+            .catch(function(error) {
+                alert("Setting preference fit failed to error: " + error);
+                console.error(error);
+            })
     }
 
     private static formUrlAddress = (apiName: string, baseUrl: string = process.env.REACT_APP_API_BASE_URL?.toString() ?? "") => {

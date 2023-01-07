@@ -14,15 +14,20 @@ function VersionSelector() {
     useEffect(() => {
         (document.getElementById('preferenceTypeRadio' + preferenceType) as HTMLInputElement).checked = true;
         
-        const changePreference = async () => {
-            let data = await UserInterfaceHelpers.getUserSettings(
-                localStorage.getItem('userId') ?? "",
-                preferenceType);
-            UserInterfaceHelpers.setUserStyle(JSON.stringify(data));
-            // TODO: Change nav bar
-            // TODO: Change page selector
+        const savePreferenceFitToDatabase = async (userId: string) => {
+            await UserInterfaceHelpers.setUserPreferenceFit(userId, preferenceType);
+        } 
+        
+        const changePreference = async (userId: string) => {
+            await UserInterfaceHelpers.setUserPreferencesFromDatabase(userId, preferenceType);
         }
-        changePreference();
+        
+        const asyncWrapper = async () => {
+            let userId: string = localStorage.getItem('userId') ?? "";
+            await changePreference(userId);
+            await savePreferenceFitToDatabase(userId);
+        }
+        asyncWrapper();
         
     }, [preferenceType]);
 

@@ -46,6 +46,7 @@ public class UserService : IUserService
             FirstName = "",
             LastName = "",
             Email = "",
+            PreferenceFit = UserPreferenceFit.Default
         };
         
         var result = await _userManager.CreateAsync(user, model.Password);
@@ -59,307 +60,369 @@ public class UserService : IUserService
     }
 
     public async Task<AuthenticationModel> GetTokenAsync(TokenRequestModel model, JWT jwtSettings)
+    {
+        var authenticationModel = new AuthenticationModel();
+        //var user = await _userManager.FindByEmailAsync(model.Email);
+        var user = await _userManager.FindByNameAsync(model.Username);
+        if (user == null)
         {
-            var authenticationModel = new AuthenticationModel();
-            //var user = await _userManager.FindByEmailAsync(model.Email);
-            var user = await _userManager.FindByNameAsync(model.Username);
-            if (user == null)
-            {
-                authenticationModel.IsAuthenticated = false;
-                authenticationModel.Message = $"No Accounts Registered with {model.Username}.";
-                return authenticationModel;
-            }
-            if (await _userManager.CheckPasswordAsync(user, model.Password))
-            {
-                authenticationModel.IsAuthenticated = true;
-                var jwtSecurityToken = await CreateJwtToken(user, jwtSettings);
-                authenticationModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-                authenticationModel.Email = user.Email;
-                authenticationModel.UserName = user.UserName;
-                authenticationModel.UserId = user.Id;
-                var rolesList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
-                authenticationModel.Roles = rolesList.ToList();
-
-
-                if (user.RefreshTokens.Any(a => a.IsActive))
-                {
-                    var activeRefreshToken = user.RefreshTokens.FirstOrDefault(a => a.IsActive == true);
-                    authenticationModel.RefreshToken = activeRefreshToken.Token;
-                    authenticationModel.RefreshTokenExpiration = activeRefreshToken.Expires;
-                }
-                else
-                {
-                    var refreshToken = CreateRefreshToken();
-                    authenticationModel.RefreshToken = refreshToken.Token;
-                    authenticationModel.RefreshTokenExpiration = refreshToken.Expires;
-                    user.RefreshTokens.Add(refreshToken);
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-
-                return authenticationModel;
-            }
             authenticationModel.IsAuthenticated = false;
-            authenticationModel.Message = $"Incorrect Credentials for user {user.Email}.";
+            authenticationModel.Message = $"No Accounts Registered with {model.Username}.";
             return authenticationModel;
         }
-
-        private RefreshToken CreateRefreshToken()
+        if (await _userManager.CheckPasswordAsync(user, model.Password))
         {
-            var randomNumber = new byte[32];
-            using var generator = RandomNumberGenerator.Create();
-            generator.GetBytes(randomNumber);
-            return new RefreshToken
-            {
-                Token = Convert.ToBase64String(randomNumber),
-                Expires = DateTime.UtcNow.AddDays(7),
-                Created = DateTime.UtcNow
-            };
-        }
-
-        private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user, JWT jwtSettings)
-        {
-            var userClaims = await _userManager.GetClaimsAsync(user);
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var roleClaims = roles.Select(t => new Claim("roles", t)).ToList();
-
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("uid", user.Id)
-            }
-            .Union(userClaims)
-            .Union(roleClaims);
-
-            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key));
-            var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
-
-            var jwtSecurityToken = new JwtSecurityToken(
-                issuer: jwtSettings.Issuer,
-                audience: jwtSettings.Audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(jwtSettings.DurationInMinutes),
-                signingCredentials: signingCredentials);
-            return jwtSecurityToken;
-        }
-
-        public async Task<string> AddRoleAsync(AddRoleModel model)
-        {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null)
-            {
-                return $"No Accounts Registered with {model.Email}.";
-            }
-
-            if (!await _userManager.CheckPasswordAsync(user, model.Password))
-            {
-                return $"Incorrect Credentials for user {user.Email}.";
-            }
-
-            var roleExists = Enum.GetNames(typeof(Role)).Any(x => string.Equals(x, model.Role, StringComparison.CurrentCultureIgnoreCase));
-                
-            if (!roleExists)
-            {
-                return $"Role {model.Role} not found.";
-            }
-                
-            var validRole = Enum.GetValues(typeof(Role)).Cast<Role>().FirstOrDefault(x => string.Equals(x.ToString(), model.Role, StringComparison.CurrentCultureIgnoreCase));
-            await _userManager.AddToRoleAsync(user, validRole.ToString());
-            return $"Added {model.Role} to user {model.Email}.";
-
-        }
-
-        public async Task<AuthenticationModel> RefreshTokenAsync(string token, JWT jwtSettings)
-        {
-            var authenticationModel = new AuthenticationModel();
-            var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
-            if (user == null)
-            {
-                authenticationModel.IsAuthenticated = false;
-                authenticationModel.Message = $"Token did not match any users.";
-                return authenticationModel;
-            }
-
-            var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
-
-            if (!refreshToken.IsActive)
-            {
-                authenticationModel.IsAuthenticated = false;
-                authenticationModel.Message = $"Token Not Active.";
-                return authenticationModel;
-            }
-
-            //Revoke Current Refresh Token
-            refreshToken.Revoked = DateTime.UtcNow;
-
-            //Generate new Refresh Token and save to Database
-            var newRefreshToken = CreateRefreshToken();
-            user.RefreshTokens.Add(newRefreshToken);
-            _context.Update(user);
-            await _context.SaveChangesAsync();
-
-            //Generates new jwt
             authenticationModel.IsAuthenticated = true;
             var jwtSecurityToken = await CreateJwtToken(user, jwtSettings);
             authenticationModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             authenticationModel.Email = user.Email;
             authenticationModel.UserName = user.UserName;
+            authenticationModel.UserId = user.Id;
             var rolesList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
             authenticationModel.Roles = rolesList.ToList();
-            authenticationModel.RefreshToken = newRefreshToken.Token;
-            authenticationModel.RefreshTokenExpiration = newRefreshToken.Expires;
+
+
+            if (user.RefreshTokens.Any(a => a.IsActive))
+            {
+                var activeRefreshToken = user.RefreshTokens.FirstOrDefault(a => a.IsActive == true);
+                authenticationModel.RefreshToken = activeRefreshToken.Token;
+                authenticationModel.RefreshTokenExpiration = activeRefreshToken.Expires;
+            }
+            else
+            {
+                var refreshToken = CreateRefreshToken();
+                authenticationModel.RefreshToken = refreshToken.Token;
+                authenticationModel.RefreshTokenExpiration = refreshToken.Expires;
+                user.RefreshTokens.Add(refreshToken);
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+            }
+
             return authenticationModel;
         }
-        public bool RevokeToken(string token)
+        authenticationModel.IsAuthenticated = false;
+        authenticationModel.Message = $"Incorrect Credentials for user {user.Email}.";
+        return authenticationModel;
+    }
+
+    private RefreshToken CreateRefreshToken()
+    {
+        var randomNumber = new byte[32];
+        using var generator = RandomNumberGenerator.Create();
+        generator.GetBytes(randomNumber);
+        return new RefreshToken
         {
-            var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
+            Token = Convert.ToBase64String(randomNumber),
+            Expires = DateTime.UtcNow.AddDays(7),
+            Created = DateTime.UtcNow
+        };
+    }
 
-            // return false if no user found with token
-            if (user == null) return false;
+    private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user, JWT jwtSettings)
+    {
+        var userClaims = await _userManager.GetClaimsAsync(user);
+        var roles = await _userManager.GetRolesAsync(user);
 
-            var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
+        var roleClaims = roles.Select(t => new Claim("roles", t)).ToList();
 
-            // return false if token is not active
-            if (!refreshToken.IsActive) return false;
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim("uid", user.Id)
+        }
+        .Union(userClaims)
+        .Union(roleClaims);
 
-            // revoke token and save
-            refreshToken.Revoked = DateTime.UtcNow;
-            _context.Update(user);
-            _context.SaveChanges();
+        var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key));
+        var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
+        var jwtSecurityToken = new JwtSecurityToken(
+            issuer: jwtSettings.Issuer,
+            audience: jwtSettings.Audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(jwtSettings.DurationInMinutes),
+            signingCredentials: signingCredentials);
+        return jwtSecurityToken;
+    }
+
+    public async Task<string> AddRoleAsync(AddRoleModel model)
+    {
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null)
+        {
+            return $"No Accounts Registered with {model.Email}.";
+        }
+
+        if (!await _userManager.CheckPasswordAsync(user, model.Password))
+        {
+            return $"Incorrect Credentials for user {user.Email}.";
+        }
+
+        var roleExists = Enum.GetNames(typeof(Role)).Any(x => string.Equals(x, model.Role, StringComparison.CurrentCultureIgnoreCase));
+            
+        if (!roleExists)
+        {
+            return $"Role {model.Role} not found.";
+        }
+            
+        var validRole = Enum.GetValues(typeof(Role)).Cast<Role>().FirstOrDefault(x => string.Equals(x.ToString(), model.Role, StringComparison.CurrentCultureIgnoreCase));
+        await _userManager.AddToRoleAsync(user, validRole.ToString());
+        return $"Added {model.Role} to user {model.Email}.";
+
+    }
+
+    public async Task<AuthenticationModel> RefreshTokenAsync(string token, JWT jwtSettings)
+    {
+        var authenticationModel = new AuthenticationModel();
+        var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
+        if (user == null)
+        {
+            authenticationModel.IsAuthenticated = false;
+            authenticationModel.Message = $"Token did not match any users.";
+            return authenticationModel;
+        }
+
+        var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
+
+        if (!refreshToken.IsActive)
+        {
+            authenticationModel.IsAuthenticated = false;
+            authenticationModel.Message = $"Token Not Active.";
+            return authenticationModel;
+        }
+
+        //Revoke Current Refresh Token
+        refreshToken.Revoked = DateTime.UtcNow;
+
+        //Generate new Refresh Token and save to Database
+        var newRefreshToken = CreateRefreshToken();
+        user.RefreshTokens.Add(newRefreshToken);
+        _context.Update(user);
+        await _context.SaveChangesAsync();
+
+        //Generates new jwt
+        authenticationModel.IsAuthenticated = true;
+        var jwtSecurityToken = await CreateJwtToken(user, jwtSettings);
+        authenticationModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+        authenticationModel.Email = user.Email;
+        authenticationModel.UserName = user.UserName;
+        var rolesList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+        authenticationModel.Roles = rolesList.ToList();
+        authenticationModel.RefreshToken = newRefreshToken.Token;
+        authenticationModel.RefreshTokenExpiration = newRefreshToken.Expires;
+        return authenticationModel;
+    }
+    public bool RevokeToken(string token)
+    {
+        var user = _context.Users.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
+
+        // return false if no user found with token
+        if (user == null) return false;
+
+        var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
+
+        // return false if token is not active
+        if (!refreshToken.IsActive) return false;
+
+        // revoke token and save
+        refreshToken.Revoked = DateTime.UtcNow;
+        _context.Update(user);
+        _context.SaveChanges();
+
+        return true;
+    }
+
+    public ApplicationUser GetById(string id)
+    {
+        return _context.Users.Find(id);
+    }
+
+    public async Task<string> GetUserIdByNameAsync(string username)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == username);
+        return user.Id;
+    }
+
+    public async Task<string> GetUserPreferences(string id, int fit = (int)UserPreferenceFit.Good) 
+    {
+        if (fit == (int)UserPreferenceFit.Default)
+        {
+            return GetDefaultPreferences();
+        }
+        
+        var pref = _context.UserPreferences.Where(x => x.UserId == id)
+            ?.OrderByDescending(y => y.Version)
+            .Where(x => x.Fit == (UserPreferenceFit)fit)?.FirstOrDefault()
+            ?.PreferencesJson ?? "{}";
+
+        return pref;
+    }
+
+    private string GetDefaultPreferences()
+    {
+        var settingsObject = new JsonObject();
+        var settings = _context.Settings.Where(x => x.Type == (int)SettingType.Css);
+        foreach (var setting in settings)
+        {
+            settingsObject[setting.Name] = setting.DefaultValue;
+        }
+
+        return JsonSerializer.Serialize(settingsObject);
+
+    }
+
+    public async Task<bool> SetUserPreferences(string userId, string preferences, int navbarLocation, 
+        UserPreferenceFit fit, string pageSelector)
+    {
+        var userPreferences = new UserPreference
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            PreferencesJson = preferences,
+            NavbarLocation = (NavbarLocation)navbarLocation,
+            Version = GetUserPreferencesMaxVersion(userId, fit) + 1,
+            Fit = fit,
+            PageSelector = pageSelector
+        };
+        
+        try
+        {
+            _context.Add(userPreferences);
+            await _context.SaveChangesAsync();
             return true;
         }
-
-        public ApplicationUser GetById(string id)
+        catch (Exception ex)
         {
-            return _context.Users.Find(id);
+            // TODO: Improve error handling
+            return false;
+        }
+    }
+
+    public bool IsUserSameAsInToken(string? userId, string userIdInToken)
+    {
+        if (userId is null)
+        {
+            return false;
         }
 
-        public async Task<string> GetUserIdByNameAsync(string username)
+        return userId == userIdInToken;
+    }
+
+    public async Task<bool> SaveRating(string userId, int rating, string reason, UserPreferenceFit fit)
+    {
+        var userRating = new UserRating()
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == username);
-            return user.Id;
-        }
-
-        public async Task<string> GetUserPreferences(string id, int fit = (int)UserPreferenceFit.Good) 
-        {
-            if (fit == (int)UserPreferenceFit.Default)
-            {
-                return GetDefaultPreferences();
-            }
-            
-            var pref = _context.UserPreferences.Where(x => x.UserId == id)
-                ?.OrderByDescending(y => y.Version)
-                .Where(x => x.Fit == (UserPreferenceFit)fit)?.FirstOrDefault()
-                ?.PreferencesJson ?? "{}";
-
-            return pref;
-        }
-
-        private string GetDefaultPreferences()
-        {
-            var settingsObject = new JsonObject();
-            var settings = _context.Settings.Where(x => x.Type == (int)SettingType.Css);
-            foreach (var setting in settings)
-            {
-                settingsObject[setting.Name] = setting.DefaultValue;
-            }
-
-            return JsonSerializer.Serialize(settingsObject);
-
-        }
-
-        public async Task<bool> SetUserPreferences(string userId, string preferences, int navbarLocation, 
-            UserPreferenceFit fit, string pageSelector)
-        {
-            var userPreferences = new UserPreference
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                PreferencesJson = preferences,
-                NavbarLocation = (NavbarLocation)navbarLocation,
-                Version = GetUserPreferencesMaxVersion(userId, fit) + 1,
-                Fit = fit,
-                PageSelector = pageSelector
-            };
-            
-            try
-            {
-                _context.Add(userPreferences);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                // TODO: Improve error handling
-                return false;
-            }
-        }
-
-        public bool IsUserSameAsInToken(string? userId, string userIdInToken)
-        {
-            if (userId is null)
-            {
-                return false;
-            }
-
-            return userId == userIdInToken;
-        }
-
-        public async Task<bool> SaveRating(string userId, int rating, string reason, UserPreferenceFit fit)
-        {
-            var userRating = new UserRating()
-            {
-                Id = new Guid(),
-                UserId = userId,
-                Rating = rating,
-                Reason = reason,
-                Timestamp = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
-                UserPreferenceVersion = GetUserPreferencesMaxVersion(userId, fit),
-                UserPreferenceFit = (int)fit
-            };
-            
-            try
-            {
-                _context.Add(userRating);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                // TODO: Improve error handling
-                return false;
-            }
-        }
+            Id = new Guid(),
+            UserId = userId,
+            Rating = rating,
+            Reason = reason,
+            Timestamp = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
+            UserPreferenceVersion = GetUserPreferencesMaxVersion(userId, fit),
+            UserPreferenceFit = (int)fit
+        };
         
-        private int GetUserPreferencesMaxVersion(string userId, UserPreferenceFit fit)
+        try
         {
-            var preferences = _context.UserPreferences
-                .Where(x => x.ApplicationUser.Id == userId && x.Fit == fit).ToList();
-            
-            return preferences.Any() ? preferences.Max(x => x.Version) : 0;
+            _context.Add(userRating);
+            await _context.SaveChangesAsync();
+            return true;
         }
-
-        public NavbarLocation GetNavBarLocationPreference(string userId, UserPreferenceFit fit)
+        catch (Exception ex)
         {
-            return _context.UserPreferences
-                .FirstOrDefault(x => x.ApplicationUser.Id == userId
-                            && x.Fit == fit
-                            && x.Version == GetUserPreferencesMaxVersion(userId, fit))?
-                .NavbarLocation ?? NavbarLocation.Top;
+            // TODO: Improve error handling
+            return false;
         }
+    }
+    
+    private int GetUserPreferencesMaxVersion(string userId, UserPreferenceFit fit)
+    {
+        var preferences = _context.UserPreferences
+            .Where(x => x.ApplicationUser.Id == userId && x.Fit == fit).ToList();
         
-        public string GetPageSelectorPreference(string userId, UserPreferenceFit fit)
+        return preferences.Any() ? preferences.Max(x => x.Version) : 0;
+    }
+
+    public NavbarLocation GetNavBarLocationPreference(string userId, UserPreferenceFit fit)
+    {
+        return _context.UserPreferences
+            .FirstOrDefault(x => x.ApplicationUser.Id == userId
+                        && x.Fit == fit
+                        && x.Version == GetUserPreferencesMaxVersion(userId, fit))?
+            .NavbarLocation ?? NavbarLocation.Top;
+    }
+    
+    public string GetPageSelectorPreference(string userId, UserPreferenceFit fit)
+    {
+        return _context.UserPreferences
+            .FirstOrDefault(x => x.ApplicationUser.Id == userId
+                                 && x.Fit == fit
+                                 && x.Version == GetUserPreferencesMaxVersion(userId, fit))?
+            .PageSelector ?? "numbers";
+    }
+
+    public string GetComponentPreference(string userId, string component, UserPreferenceFit fit)
+    {
+        var userPreference = _context.UserPreferences
+            .FirstOrDefault(x => x.ApplicationUser.Id == userId
+                                 && x.Fit == fit
+                                 && x.Version == GetUserPreferencesMaxVersion(userId, fit));
+
+        switch (component.ToLower())
         {
-            return _context.UserPreferences
-                .FirstOrDefault(x => x.ApplicationUser.Id == userId
-                                     && x.Fit == fit
-                                     && x.Version == GetUserPreferencesMaxVersion(userId, fit))?
-                .PageSelector ?? "numbers";
+            case "style":
+                if (fit == UserPreferenceFit.Default)
+                {
+                    return GetDefaultPreferences();
+                }
+
+                return userPreference?.PreferencesJson ?? "{}";
+                break;
+            case "navbar":
+                if (fit == UserPreferenceFit.Default)
+                {
+                    return "top";
+                }
+                return (userPreference?.NavbarLocation ?? NavbarLocation.Top).ToString();
+            case "pageselector":
+                if (fit == UserPreferenceFit.Default)
+                {
+                    return "numbers";
+                }
+                return userPreference?.PageSelector ?? "numbers";
+            default:
+                return "";
         }
+    }
+
+    public UserPreferenceFit GetUserPreferenceFit(string userId)
+    {
+        return _context.Users.FirstOrDefault(x => x.Id == userId)?.PreferenceFit 
+               ?? UserPreferenceFit.Default;
+    }
+    
+    public bool SetUserPreferenceFit(string userId, UserPreferenceFit fit)
+    {
+        try
+        {
+            var user = _context.Users.FirstOrDefault(x => x.Id == userId);
+            if (user is null)
+            {
+                return false;
+            }
+
+            user.PreferenceFit = fit;
+            _context.Update(user);
+            _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            // TODO: Error handling
+            return false;
+        }
+    }
 }
 
 

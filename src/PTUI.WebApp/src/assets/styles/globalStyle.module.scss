@@ -139,6 +139,7 @@ html * {
   height: 5vh; /* 100% Full-height */
   width: 100%; /* 0 width - change this with JavaScript */
   border-bottom: 1px solid black;
+  flex-direction: row;
   
   nav {
     margin: auto;
@@ -157,6 +158,7 @@ html * {
   padding-top: 1em; /* Place content 60px from the top */
   //transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */;
   border-right: 1px solid black;
+  flex-direction: column;
   nav {
     flex-direction: column;
   }
@@ -173,6 +175,7 @@ html * {
   padding-top: 1em; /* Place content 60px from the top */
   //transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */;
   border-left: 1px solid black;
+  flex-direction: column;
   nav {
     flex-direction: column;
   }
