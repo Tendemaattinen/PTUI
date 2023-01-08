@@ -30,23 +30,19 @@ function NavigationBar() {
     return (
         <>
             <div id={'navbar'} ref={navbarRef} className={`${globalStyle.navbar} ${globalStyle.topNavbar}`}>
-                <div className={style.navigationBarLogoDiv}>
-                    <p id={style.navigationBarLogo}>PTUI</p>
-                </div>
+                {/*<div className={style.navigationBarLogoDiv}>*/}
+                {/*    <p id={style.navigationBarLogo}>PTUI</p>*/}
+                {/*</div>*/}
                 <nav>
                     <Link className={globalStyle.navbarLink} to="/">Welcome</Link>
-                    <Link className={globalStyle.navbarLink} to="/editor">Editor</Link>
-                    <Link className={globalStyle.navbarLink} to="/example">Example page</Link>
-                    <Link className={globalStyle.navbarLink} to="/exampleContent">Example content page</Link>
-                    {/*TODO: Remove when ready, show when user is done personalization*/}
-                    <Link className={globalStyle.navbarLink} to="/questionnaire">Questionnaire</Link>
-                    {/*TODO: If user not done yet, then show*/}
-                    <Link className={globalStyle.navbarLink} to="/personalization">Personalization</Link>
+                    {/*<Link className={globalStyle.navbarLink} to="/example">Example page</Link>*/}
                     {
                         (userName != null)
                             ?
                             <>
+                                <Link className={globalStyle.navbarLink} to="/personalization">Personalization</Link>
                                 <Link className={globalStyle.navbarLink} to="/questionnaire">Questionnaire</Link>
+                                <Link className={globalStyle.navbarLink} to="/exampleContent">Example content page</Link>
                                 <a href={"#"} className={globalStyle.navbarLink}>{userName}</a>
                                 <a href={"#"} className={globalStyle.navbarLink} onClick={() => dispatch(logout())}>Logout</a>
                             </>

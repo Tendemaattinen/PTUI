@@ -7,12 +7,14 @@ import {FieldValues, useForm} from "react-hook-form";
 import Editor from "../Editor/Editor";
 import UserInterfaceHelpers from "../../helpers/UserInterfaceHelpers";
 import {useAppSelector} from "../../hooks/hooks";
+import ContentPage2 from "../ContentPage2/ContentPage2";
 
 function ExampleContent() {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSelector, setPageSelector] = useState('numbers');
     const [maxPages, setMaxPage] = useState(4);
     const { preferenceType } = useAppSelector((state) => state.user);
+    const { userName, userToken } = useAppSelector((state) => state.user)
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     useEffect(() => {
@@ -23,7 +25,11 @@ function ExampleContent() {
     
     useEffect(() => {
         const asyncWrapper = async () => {
-            let pageSelectorType = await UserInterfaceHelpers.getComponentPreference(UserInterfaceHelpers.getUserId(), 'pageSelector',preferenceType);
+            let pageSelectorType = 'numbers';
+            if (!userToken && localStorage.getItem('token')) {
+                pageSelectorType = await UserInterfaceHelpers.getComponentPreference(UserInterfaceHelpers.getUserId(), 'pageSelector',preferenceType);
+            }
+            
             if (pageSelectorType !== pageSelector) {
                 setPageSelector(pageSelectorType);
             }
@@ -91,9 +97,9 @@ function ExampleContent() {
             case 1:
                 return <ContentPage/>
             case 2:
-                return <Example/>
+                return <ContentPage2/>
             case 3:
-                return <ContentPage/>
+                return <Example/>
             case 4:
                 return <Editor/>
             default:
