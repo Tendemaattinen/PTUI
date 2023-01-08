@@ -1,8 +1,4 @@
 ﻿import React, {ChangeEventHandler, useEffect, useState} from 'react';
-import forest1 from '../../assets/images/example/forest-1.jpg'
-import mountains1 from '../../assets/images/example/mountains-1.jpg'
-import road1 from '../../assets/images/example/road-1.jpg'
-import sunset1 from '../../assets/images/example/sunset-1.jpg'
 
 import ContentPage from '../ContentPage/ContentPage'
 import Example from "../Example/Example";
@@ -15,9 +11,9 @@ import {useAppSelector} from "../../hooks/hooks";
 function ExampleContent() {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSelector, setPageSelector] = useState('numbers');
+    const [maxPages, setMaxPage] = useState(4);
     const { preferenceType } = useAppSelector((state) => state.user);
     const { register, handleSubmit, formState: { errors } } = useForm();
-    let maxPagesNumber: number = 4;
 
     useEffect(() => {
         (document.getElementById('changePageRadio' + currentPage) as HTMLInputElement).checked = true;
@@ -32,15 +28,11 @@ function ExampleContent() {
                 setPageSelector(pageSelectorType);
             }
         }
-        asyncWrapper()
+        asyncWrapper();
     })
 
-    const changePage = (pageNumber: number) => {
-        setCurrentPage(pageNumber);
-    }
-
     const nextPage = () => {
-        if (currentPage < maxPagesNumber) {
+        if (currentPage < maxPages) {
             setCurrentPage(currentPage + 1);
         }
     }
@@ -62,22 +54,22 @@ function ExampleContent() {
             case '1':
             case 'one':
             case 'first':
-                changePage(1);
+                setCurrentPage(1);
                 break;
             case '2':
             case 'two':
             case 'second':
-                changePage(2);
+                setCurrentPage(2);
                 break;
             case '3':
             case 'three':
             case 'third':
-                changePage(3);
+                setCurrentPage(3);
                 break;
             case '4':
             case 'four':
             case 'fourth':
-                changePage(3);
+                setCurrentPage(3);
                 break;
             case 'previous':
                 previousPage();
@@ -86,7 +78,7 @@ function ExampleContent() {
                 nextPage();
                 break;
             case 'last':
-                changePage(maxPagesNumber);
+                setCurrentPage(maxPages);
                 break;
             default:
                 // TODO: Invalid input
@@ -115,8 +107,8 @@ function ExampleContent() {
             {(pageSelector === 'numbers'.toLowerCase())
                 ?
                 <div>
-                {Array.from(Array(maxPagesNumber).keys()).map(x => ++x).map(pageNumber => {
-                        return (<button onClick={() => changePage(pageNumber)}>Page {pageNumber}</button>)
+                {Array.from(Array(maxPages).keys()).map(x => ++x).map(pageNumber => {
+                        return (<button onClick={() => setCurrentPage(pageNumber)}>Page {pageNumber}</button>)
                     })}
                 </div>
                 :
@@ -145,10 +137,9 @@ function ExampleContent() {
                 <></>
             }
             
-            
             <div>
                 <select onChange={() => changePageDropDown()} id={"pageSelectorDropdown"}>
-                    {Array.from(Array(maxPagesNumber).keys()).map(x => ++x).map(item => {
+                    {Array.from(Array(maxPages).keys()).map(x => ++x).map(item => {
                         return (<option key={item} value={item}>{item}</option> )
                     })}
                 </select>
@@ -158,22 +149,22 @@ function ExampleContent() {
                 <form>
                     <label htmlFor={'changePageRadio1'}>
                         <input id={'changePageRadio1'} name={'changePageRadio'} type={"radio"} value={1} 
-                               onClick={() => changePage(1)}/>
+                               onClick={() => setCurrentPage(1)}/>
                         Page 1
                     </label>
                     <label htmlFor={'changePageRadio2'}>
                         <input id={'changePageRadio2'} name={'changePageRadio'} type={"radio"} value={2} 
-                               onClick={() => changePage(2)}/>
+                               onClick={() => setCurrentPage(2)}/>
                         Page 2
                     </label>
                     <label htmlFor={'changePageRadio3'}>
                         <input id={'changePageRadio3'} name={'changePageRadio'} type={"radio"} value={3} 
-                               onClick={() => changePage(3)}/>
+                               onClick={() => setCurrentPage(3)}/>
                         Page 3
                     </label>
                     <label htmlFor={'changePageRadio4'}>
                         <input id={'changePageRadio4'} name={'changePageRadio'} type={"radio"} value={4}
-                               onClick={() => changePage(4)}/>
+                               onClick={() => setCurrentPage(4)}/>
                         Page 4
                     </label>
                 </form>
