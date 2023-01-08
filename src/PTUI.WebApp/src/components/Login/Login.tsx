@@ -29,9 +29,10 @@ function Login() {
     }, [navigate, userName])
     
     useEffect(() => {
-        let errorMessageElement = document.getElementById("errorMessage") || undefined;
+        let errorMessageElement = document.getElementById("errorMessageLoginPage") || undefined;
         if (error !== null && error !== "" && error !== undefined) {
             errorMessageElement!.style!.display = "block";
+            return;
         }
         errorMessageElement!.style!.display = "none";
     }, [error])
@@ -39,7 +40,7 @@ function Login() {
     return (
         <div id={globalStyle.loginComponent}>
             <h1>Login</h1>
-            <div id={"errorMessage"} className={`${globalStyle.message} ${globalStyle.error}`}>{error}</div>
+            <div id={"errorMessageLoginPage"} className={`${globalStyle.message} ${globalStyle.error}`}>{error}</div>
             <form onSubmit={handleSubmit(submitForm)} className={globalStyle.authForm}>
                 <div>
                     <div>

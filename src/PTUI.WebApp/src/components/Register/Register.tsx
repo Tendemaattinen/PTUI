@@ -36,6 +36,7 @@ function Register() {
         let errorMessageElement = document.getElementById("errorMessage") || undefined;
         if (error !== null && error !== "" && error !== undefined) {
             errorMessageElement!.style!.display = "block";
+            return;
         }
         errorMessageElement!.style!.display = "none";
     }, [error])
