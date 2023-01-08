@@ -175,14 +175,15 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetPreferenceFit(string tokenUserId)
     {
-        return Ok(_userService.GetUserPreferenceFit(tokenUserId));
+        var fit = _userService.GetUserPreferenceFit(tokenUserId);
+        return Ok(fit);
     }
     
-    [HttpGet("preferenceFit")]
+    [HttpPost("preferenceFit")]
     [Authorize]
-    public async Task<IActionResult> SetPreferenceFit(string tokenUserId, int fit = (int)UserPreferenceFit.Default)
+    public async Task<IActionResult> SetPreferenceFit([FromBody]PreferenceFitPostModel model)
     {
-        if (!_userService.SetUserPreferenceFit(tokenUserId, (UserPreferenceFit)fit))
+        if (!(await _userService.SetUserPreferenceFit(model.UserId, model.Fit)))
         {
             return BadRequest();
         }

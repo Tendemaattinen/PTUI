@@ -26,8 +26,8 @@ function AppRouter() {
                 <Route path="exampleContent" element={<ExampleContent />}></Route>
                 <Route path="login" element={<Login />} />
                 <Route path="register" element={<Register />} />
-                <Route path="userPreferenceQuestionnaire" element={<UserPreferenceQuestionnaire />} />
-                <Route path="userPersonalization" element={<UserPersonalization />} />
+                <Route path="questionnaire" element={<UserPreferenceQuestionnaire />} />
+                <Route path="personalization" element={<UserPersonalization />} />
             </Routes>
         </>
     )

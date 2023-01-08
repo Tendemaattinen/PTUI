@@ -34,10 +34,7 @@ function UserPersonalization() {
             })
             .catch(function(error) {
                 console.log("Error: " + error);
-                console.log(error);
             })
-        
-        await UserInterfaceHelpers.setUserStyle(data);
     }
 
     // TODO: Set defaults?

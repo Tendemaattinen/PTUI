@@ -7,32 +7,28 @@ import UserInterfaceHelpers from "../../helpers/UserInterfaceHelpers";
 
 function VersionSelector() {
 
-    const { preferenceType } = useAppSelector((state) => state.user)
+    const { preferenceType } = useAppSelector((state) => state.user);
     const dispatch = useAppDispatch();
     const { register, handleSubmit, formState: { errors } } = useForm();
     
     useEffect(() => {
         (document.getElementById('preferenceTypeRadio' + preferenceType) as HTMLInputElement).checked = true;
-        
-        const savePreferenceFitToDatabase = async (userId: string) => {
-            await UserInterfaceHelpers.setUserPreferenceFit(userId, preferenceType);
-        } 
-        
-        const changePreference = async (userId: string) => {
-            await UserInterfaceHelpers.setUserPreferencesFromDatabase(userId, preferenceType);
-        }
-        
+    }, [preferenceType]);
+    
+    useEffect(() => {
         const asyncWrapper = async () => {
             let userId: string = localStorage.getItem('userId') ?? "";
-            await changePreference(userId);
-            await savePreferenceFitToDatabase(userId);
+            let type = await UserInterfaceHelpers.getUserPreferenceFit(userId);
+            (document.getElementById('preferenceTypeRadio' + type) as HTMLInputElement).checked = true;
         }
-        asyncWrapper();
         
-    }, [preferenceType]);
+        asyncWrapper()
+    }, [])
 
     const changePreferenceType = async (type: number) => {
         dispatch(changePreference(type));
+        await UserInterfaceHelpers.setUserPreferenceFit(UserInterfaceHelpers.getUserId(), type);
+        await UserInterfaceHelpers.setUserPreferencesFromDatabase(UserInterfaceHelpers.getUserId(), type)
     }
     
     return (

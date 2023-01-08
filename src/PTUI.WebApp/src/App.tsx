@@ -52,7 +52,7 @@ function App() {
         <div className={globalStyle.mainBody}>
             <AppRouter/>
         </div>
-        <Footer/>
+        {/*<Footer/>*/}
     </div>
   );
 }

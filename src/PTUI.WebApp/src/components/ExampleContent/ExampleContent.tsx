@@ -9,39 +9,53 @@ import Example from "../Example/Example";
 
 import {FieldValues, useForm} from "react-hook-form";
 import Editor from "../Editor/Editor";
+import UserInterfaceHelpers from "../../helpers/UserInterfaceHelpers";
+import {useAppSelector} from "../../hooks/hooks";
 
 function ExampleContent() {
     const [currentPage, setCurrentPage] = useState(1);
+    const [pageSelector, setPageSelector] = useState('numbers');
+    const { preferenceType } = useAppSelector((state) => state.user);
     const { register, handleSubmit, formState: { errors } } = useForm();
     let maxPagesNumber: number = 4;
-    
+
     useEffect(() => {
         (document.getElementById('changePageRadio' + currentPage) as HTMLInputElement).checked = true;
         (document.getElementById('pageSelectorDropdown') as HTMLSelectElement)
             .selectedIndex = currentPage - 1;
     }, [currentPage])
     
+    useEffect(() => {
+        const asyncWrapper = async () => {
+            let pageSelectorType = await UserInterfaceHelpers.getComponentPreference(UserInterfaceHelpers.getUserId(), 'pageSelector',preferenceType);
+            if (pageSelectorType !== pageSelector) {
+                setPageSelector(pageSelectorType);
+            }
+        }
+        asyncWrapper()
+    })
+
     const changePage = (pageNumber: number) => {
         setCurrentPage(pageNumber);
     }
-    
+
     const nextPage = () => {
         if (currentPage < maxPagesNumber) {
             setCurrentPage(currentPage + 1);
         }
     }
-    
+
     const previousPage = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);    
         }
     }
-    
+
     const changePageDropDown = () => {
         let pageNumber = (document.getElementById("pageSelectorDropdown") as HTMLInputElement)?.value ?? "1";
         setCurrentPage(Number(pageNumber));
     }
-    
+
     const submitConsoleForm = (formData: FieldValues) => {
         let input: string = formData.consoleInput;
         switch (input) {
@@ -79,7 +93,7 @@ function ExampleContent() {
                 break;
         }
     }
-    
+
     const renderContentPage = () => {
         switch (currentPage) {
             case 1:
@@ -97,16 +111,40 @@ function ExampleContent() {
     
     return(
         <div>
-            <div>
+
+            {(pageSelector === 'numbers'.toLowerCase())
+                ?
+                <div>
                 {Array.from(Array(maxPagesNumber).keys()).map(x => ++x).map(pageNumber => {
-                    return (<button onClick={() => changePage(pageNumber)}>Page {pageNumber}</button>)
-                })}
-            </div>
+                        return (<button onClick={() => changePage(pageNumber)}>Page {pageNumber}</button>)
+                    })}
+                </div>
+                :
+                <></>
+            }
+
+            {(pageSelector === 'arrows'.toLowerCase())
+                ?
+                <div>
+                    <button onClick={() => previousPage()}>Previous</button>
+                    <button onClick={() => nextPage()}>Next</button>
+                </div>
+                :
+                <></>
+            }
+
+            {(pageSelector === 'commandLine'.toLowerCase())
+                ?
+                <div>
+                    <form onSubmit={handleSubmit(submitConsoleForm)}>
+                        <input type={'text'} {...register('consoleInput')}></input>
+                        <button>Submit</button>
+                    </form>
+                </div>
+                :
+                <></>
+            }
             
-            <div>
-                <button onClick={() => previousPage()}>Previous</button>
-                <button onClick={() => nextPage()}>Next</button>
-            </div>
             
             <div>
                 <select onChange={() => changePageDropDown()} id={"pageSelectorDropdown"}>
@@ -117,14 +155,6 @@ function ExampleContent() {
             </div>
             
             <div>
-                <form onSubmit={handleSubmit(submitConsoleForm)}>
-                    <input type={'text'} {...register('consoleInput')}></input>
-                    <button>Submit</button>
-                </form>
-            </div>
-            
-            <div>
-                <p>Radio button here</p>
                 <form>
                     <label htmlFor={'changePageRadio1'}>
                         <input id={'changePageRadio1'} name={'changePageRadio'} type={"radio"} value={1} 

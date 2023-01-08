@@ -26,5 +26,5 @@ public interface IUserService
     Task<string> GetUserIdByNameAsync(string username);
     string GetComponentPreference(string userId, string component, UserPreferenceFit fit);
     UserPreferenceFit GetUserPreferenceFit(string userId);
-    bool SetUserPreferenceFit(string userId, UserPreferenceFit fit);
+    Task<bool> SetUserPreferenceFit(string userId, UserPreferenceFit fit);
 }

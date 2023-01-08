@@ -402,7 +402,7 @@ public class UserService : IUserService
                ?? UserPreferenceFit.Default;
     }
     
-    public bool SetUserPreferenceFit(string userId, UserPreferenceFit fit)
+    public async Task<bool> SetUserPreferenceFit(string userId, UserPreferenceFit fit)
     {
         try
         {
@@ -414,7 +414,7 @@ public class UserService : IUserService
 
             user.PreferenceFit = fit;
             _context.Update(user);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception ex)

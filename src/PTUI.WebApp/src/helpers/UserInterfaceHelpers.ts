@@ -117,7 +117,7 @@ export class UserInterfaceHelpers {
                 componentPreference = response.data;
             })
             .catch(function(error) {
-                alert("Getting " + component + " preference failed to error: " + error);
+                //alert("Getting " + component + " preference failed to error: " + error);
                 console.error(error);
             })
         return componentPreference;
@@ -151,7 +151,7 @@ export class UserInterfaceHelpers {
                 preferenceFit = response.data;
             })
             .catch(function(error) {
-                alert("Getting preference fit failed to error: " + error);
+                //alert("Getting preference fit failed to error: " + error);
                 console.error(error);
             })
         return preferenceFit;
@@ -159,22 +159,26 @@ export class UserInterfaceHelpers {
 
     static setUserPreferenceFit = async (userId: string, preferenceFit: number) => {
         const url: string = UserInterfaceHelpers.formUrlAddress("preferenceFit");
-        const content: string = JSON.stringify({tokenUserId: userId, fit: preferenceFit})
+        const content: string = JSON.stringify({userId: userId, fit: preferenceFit})
         await axios.post(url, content, {
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': "Bearer " + localStorage.getItem("token") ?? "",
             }})
             .then(function (response) {
-                console.log("setUserPreferenceFit success");
             })
             .catch(function(error) {
-                alert("Setting preference fit failed to error: " + error);
+                //alert("Setting preference fit failed to error: " + error);
                 console.error(error);
             })
     }
 
     private static formUrlAddress = (apiName: string, baseUrl: string = process.env.REACT_APP_API_BASE_URL?.toString() ?? "") => {
         return baseUrl + apiName;
+    }
+    
+    static getUserId = () => {
+        return localStorage.getItem('userId') ?? "";
     }
 }
 

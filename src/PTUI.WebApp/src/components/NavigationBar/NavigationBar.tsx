@@ -39,14 +39,14 @@ function NavigationBar() {
                     <Link className={globalStyle.navbarLink} to="/example">Example page</Link>
                     <Link className={globalStyle.navbarLink} to="/exampleContent">Example content page</Link>
                     {/*TODO: Remove when ready, show when user is done personalization*/}
-                    <Link className={globalStyle.navbarLink} to="/userPreferenceQuestionnaire">Questionnaire</Link>
+                    <Link className={globalStyle.navbarLink} to="/questionnaire">Questionnaire</Link>
                     {/*TODO: If user not done yet, then show*/}
-                    <Link className={globalStyle.navbarLink} to="/userPersonalization">Personalization</Link>
+                    <Link className={globalStyle.navbarLink} to="/personalization">Personalization</Link>
                     {
                         (userName != null)
                             ?
                             <>
-                                <Link className={globalStyle.navbarLink} to="/userPreferenceQuestionnaire">Questionnaire</Link>
+                                <Link className={globalStyle.navbarLink} to="/questionnaire">Questionnaire</Link>
                                 <a href={"#"} className={globalStyle.navbarLink}>{userName}</a>
                                 <a href={"#"} className={globalStyle.navbarLink} onClick={() => dispatch(logout())}>Logout</a>
                             </>
