@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import { useEffect } from 'react'
-import { Link } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 import { logout } from "../../reducers/userSlice"
 
@@ -15,17 +15,22 @@ function NavigationBar() {
     
     const dispatch = useAppDispatch();
     const { userName, userToken } = useAppSelector((state) => state.user)
+
+    const navigate = useNavigate();
     
     useEffect(() => {
         if (userName) {
-            //dispatch(getUserDetails())
             const navbar = navbarRef.current;
             if (navbar !== null) {
-                //const style = navbar?.style;
-                //style.backgroundColor = "red";
+
             }
         }
     }, [userName, dispatch])
+    
+    const logoutUser = () => {
+        dispatch(logout());
+        navigate('login');
+    }
     
     return (
         <>
@@ -35,7 +40,6 @@ function NavigationBar() {
                 {/*</div>*/}
                 <nav>
                     <Link className={globalStyle.navbarLink} to="/">Welcome</Link>
-                    {/*<Link className={globalStyle.navbarLink} to="/example">Example page</Link>*/}
                     {
                         (userName != null)
                             ?
@@ -44,7 +48,7 @@ function NavigationBar() {
                                 <Link className={globalStyle.navbarLink} to="/questionnaire">Questionnaire</Link>
                                 <Link className={globalStyle.navbarLink} to="/exampleContent">Example content page</Link>
                                 <a href={"#"} className={globalStyle.navbarLink}>{userName}</a>
-                                <a href={"#"} className={globalStyle.navbarLink} onClick={() => dispatch(logout())}>Logout</a>
+                                <a href={"#"} className={globalStyle.navbarLink} onClick={logoutUser}>Logout</a>
                             </>
                             :
                             <>
