@@ -2,7 +2,7 @@
 import {
     BrowserRouter,
     Routes,
-    Route, Link, Router,
+    Route, Link, Router, Navigate,
 } from "react-router-dom";
 
 import NavigationBar from "../NavigationBar/NavigationBar";
@@ -15,19 +15,40 @@ import Editor from "../Editor/Editor";
 import UserPreferenceQuestionnaire from "../UserPreferenceQuestionnaire/UserPreferenceQuestionnaire";
 import ExampleContent from "../ExampleContent/ExampleContent";
 import UserPersonalization from "../UserPersonalization/UserPersonalization";
+import {useAppSelector} from "../../hooks/hooks";
 
 function AppRouter() {
+
+    const { userName, userToken } = useAppSelector((state) => state.user);
+
+    const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+        return userName ? children : <Navigate to="/" replace />;
+    };
+    
     return (
         <>
             <Routes>
                 <Route path="/" element={<Welcome />} />
-                <Route path="editor" element={<Editor />} />
-                <Route path="example" element={<Example />}></Route>
-                <Route path="exampleContent" element={<ExampleContent />}></Route>
                 <Route path="login" element={<Login />} />
                 <Route path="register" element={<Register />} />
-                <Route path="questionnaire" element={<UserPreferenceQuestionnaire />} />
-                <Route path="personalization" element={<UserPersonalization />} />
+                <Route path="exampleContent" element={(
+                    <ProtectedRoute>
+                        <ExampleContent />
+                    </ProtectedRoute>
+                )}
+                />
+                <Route path="questionnaire" element={(
+                    <ProtectedRoute>
+                        <UserPreferenceQuestionnaire />
+                    </ProtectedRoute>
+                )}
+                />
+                <Route path="personalization" element={(
+                    <ProtectedRoute>
+                        <UserPersonalization />
+                    </ProtectedRoute>
+                    )} 
+                />
             </Routes>
         </>
     )
