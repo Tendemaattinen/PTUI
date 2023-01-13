@@ -12,15 +12,19 @@ import ContentPage2 from "../ContentPage2/ContentPage2";
 function ExampleContent() {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSelector, setPageSelector] = useState('numbers');
-    const [maxPages, setMaxPage] = useState(4);
+    const [maxPages, setMaxPage] = useState(3);
     const { preferenceType } = useAppSelector((state) => state.user);
     const { userName, userToken } = useAppSelector((state) => state.user)
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     useEffect(() => {
-        (document.getElementById('changePageRadio' + currentPage) as HTMLInputElement).checked = true;
-        (document.getElementById('pageSelectorDropdown') as HTMLSelectElement)
-            .selectedIndex = currentPage - 1;
+        if (document.getElementById('changePageRadio' + currentPage)) {
+            (document.getElementById('changePageRadio' + currentPage) as HTMLInputElement).checked = true;
+        }
+        if (document.getElementById('pageSelectorDropdown')) {
+            (document.getElementById('pageSelectorDropdown') as HTMLSelectElement)
+                .selectedIndex = currentPage - 1;
+        }
     }, [currentPage])
     
     useEffect(() => {
@@ -100,8 +104,8 @@ function ExampleContent() {
                 return <ContentPage2/>
             case 3:
                 return <Example/>
-            case 4:
-                return <Editor/>
+            // case 4:
+            //     return <Editor/>
             default:
                 return <ContentPage/>
         }
@@ -131,7 +135,7 @@ function ExampleContent() {
                 <></>
             }
 
-            {(pageSelector === 'commandLine'.toLowerCase())
+            {(pageSelector === 'command-line'.toLowerCase())
                 ?
                 <div>
                     <form onSubmit={handleSubmit(submitConsoleForm)}>
@@ -142,39 +146,50 @@ function ExampleContent() {
                 :
                 <></>
             }
+
+            {(pageSelector === 'dropdown'.toLowerCase())
+                ?
+                <div>
+                    <select onChange={() => changePageDropDown()} id={"pageSelectorDropdown"}>
+                        {Array.from(Array(maxPages).keys()).map(x => ++x).map(item => {
+                            return (<option key={item} value={item}>{item}</option> )
+                        })}
+                    </select>
+                </div>
+                :
+                <></>
+            }
+
+            {(pageSelector === 'radio'.toLowerCase())
+                ?
+                <div>
+                    <form>
+                        <label htmlFor={'changePageRadio1'}>
+                            <input id={'changePageRadio1'} name={'changePageRadio'} type={"radio"} value={1}
+                                   onClick={() => setCurrentPage(1)}/>
+                            Page 1
+                        </label>
+                        <label htmlFor={'changePageRadio2'}>
+                            <input id={'changePageRadio2'} name={'changePageRadio'} type={"radio"} value={2}
+                                   onClick={() => setCurrentPage(2)}/>
+                            Page 2
+                        </label>
+                        <label htmlFor={'changePageRadio3'}>
+                            <input id={'changePageRadio3'} name={'changePageRadio'} type={"radio"} value={3}
+                                   onClick={() => setCurrentPage(3)}/>
+                            Page 3
+                        </label>
+                        <label htmlFor={'changePageRadio4'}>
+                            <input id={'changePageRadio4'} name={'changePageRadio'} type={"radio"} value={4}
+                                   onClick={() => setCurrentPage(4)}/>
+                            Page 4
+                        </label>
+                    </form>
+                </div>
+                :
+                <></>
+            }
             
-            <div>
-                <select onChange={() => changePageDropDown()} id={"pageSelectorDropdown"}>
-                    {Array.from(Array(maxPages).keys()).map(x => ++x).map(item => {
-                        return (<option key={item} value={item}>{item}</option> )
-                    })}
-                </select>
-            </div>
-            
-            <div>
-                <form>
-                    <label htmlFor={'changePageRadio1'}>
-                        <input id={'changePageRadio1'} name={'changePageRadio'} type={"radio"} value={1} 
-                               onClick={() => setCurrentPage(1)}/>
-                        Page 1
-                    </label>
-                    <label htmlFor={'changePageRadio2'}>
-                        <input id={'changePageRadio2'} name={'changePageRadio'} type={"radio"} value={2} 
-                               onClick={() => setCurrentPage(2)}/>
-                        Page 2
-                    </label>
-                    <label htmlFor={'changePageRadio3'}>
-                        <input id={'changePageRadio3'} name={'changePageRadio'} type={"radio"} value={3} 
-                               onClick={() => setCurrentPage(3)}/>
-                        Page 3
-                    </label>
-                    <label htmlFor={'changePageRadio4'}>
-                        <input id={'changePageRadio4'} name={'changePageRadio'} type={"radio"} value={4}
-                               onClick={() => setCurrentPage(4)}/>
-                        Page 4
-                    </label>
-                </form>
-            </div>
             {renderContentPage()}
         </div>
     );

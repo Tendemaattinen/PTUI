@@ -1,4 +1,4 @@
-﻿import React, {useEffect} from 'react';
+﻿import React, {useEffect, useState} from 'react';
 import {FieldValues, useForm} from "react-hook-form";
 
 import personalizationStyle from './UserPersonalization.module.scss'
@@ -11,6 +11,8 @@ import arialFontImg from "../../assets/images/fonts/Arial.png";
 import helveticaImg from "../../assets/images/fonts/Helvetica.png";
 import timesImg from "../../assets/images/fonts/Times.png";
 import style from "./UserPersonalization.module.scss";
+import {Setting} from "../../interfaces/Setting";
+import {Question} from "../../interfaces/Question";
 
 function UserPersonalization() {
 
@@ -37,14 +39,106 @@ function UserPersonalization() {
             })
     }
 
-    // TODO: Set defaults?
+    const [questions, setQuestions] = useState<Question[]>([]);
+    // TODO: Placeholder?
+    const [count, setCount] = useState<number>(0);
+    //const [defaultChecked, setDefaultChecked] = useState<number>(false);
+    
+    const getQuestions = async () => {
+        const url: string = process.env.REACT_APP_API_BASE_URL + "personalizationQuestion";
+        axios.get(url,{
+            headers: {
+                'Authorization': "Bearer " + localStorage.getItem("token") ?? ""
+            }})
+        .then(function (response) {
+            setQuestions(response.data);
+        })
+        .catch(function(error) {
+            alert("Getting questions from database failed");
+            console.log("Error: " + error);
+        })
+    }
+
+    const formAnswerObject = async (questionsArray: Array<Question>, formData: FieldValues) => {
+        let obj: Record<string, string> = {};
+        questionsArray.forEach((question) => {
+            obj[question.name] = formData[question.name];
+        })
+        return obj;
+    }
+
+    const submitAnswers = async (formData:  FieldValues) => {
+        const url: string = process.env.REACT_APP_API_BASE_URL + "personalization2";
+        let object = await formAnswerObject(questions, formData);
+        // TODO: Check and rename parameters
+        // TODO: What if answer is null
+        const content: string = JSON.stringify({userId: localStorage.getItem('user') ?? "",
+            answers: JSON.stringify(object)})
+        let data = "";
+        // API call
+        await axios.post(url, content, {
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(function (response) {
+                data = JSON.stringify(response.data);
+            })
+            .catch(function(error) {
+                console.log("Error: " + error);
+            })
+    }
+    
     useEffect(() => {
-        
-    }, [])
+        const fetchData = async () => {
+            return await getQuestions();
+        }
+        fetchData()
+    }, [count])
+
+    useEffect(() => {
+        if (questions.length < 1) {
+            return;
+        }
+    }, [questions])
     
     return(
         <div>
             <h1>Personalization</h1>
+            <form onSubmit={handleSubmit(submitAnswers)} className={globalStyle.authForm}>
+                <div className={registerStyle.personalizationSection}>
+                    <h2>Questions from database</h2>
+                    {questions.map((question,index1) => {
+                        return (
+                            <div key={index1}>
+                                <h4>{question.text}</h4>
+                                <div className={registerStyle.personalizationRadioRow}>
+                                    {question.answers.map((answer,index2) => {
+                                        if (answer.image !== null) {
+                                            return(
+                                                <label key={index2} htmlFor={answer.name}>
+                                                    <input {...register(question.name)} type={"radio"} value={answer.name} id={answer.name} defaultChecked={index2 === 0} />
+                                                    <span>&nbsp;</span>
+                                                    <img src={answer.image} alt={"Times new roman"} className={style.radioImage}/>
+                                                </label>
+                                            );
+                                        }
+                                        return(
+                                            <label key={index2} htmlFor={answer.name}>
+                                                <input {...register(question.name)} type={"radio"} value={answer.name} id={answer.name} defaultChecked={index2 === 0}/>
+                                                <span>&nbsp;{answer.text}</span>
+                                            </label>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+                <div>
+                    <input type={"submit"} value={"submit"} className={globalStyle.button}/>
+                </div>
+            </form>
+            
             <form onSubmit={handleSubmit(submitForm)} className={globalStyle.authForm}>
                 <div className={registerStyle.personalizationSection}>
                     <h2>Personalization questions</h2>

@@ -273,7 +273,7 @@ public class UserService : IUserService
 
     }
 
-    public async Task<bool> SetUserPreferences(string userId, string preferences, int navbarLocation, 
+    public async Task<bool> SetUserPreferences(string userId, string preferences, NavbarLocation navbarLocation, 
         UserPreferenceFit fit, string pageSelector)
     {
         var userPreferences = new UserPreference
@@ -281,7 +281,7 @@ public class UserService : IUserService
             Id = Guid.NewGuid(),
             UserId = userId,
             PreferencesJson = preferences,
-            NavbarLocation = (NavbarLocation)navbarLocation,
+            NavbarLocation = navbarLocation,
             Version = GetUserPreferencesMaxVersion(userId, fit) + 1,
             Fit = fit,
             PageSelector = pageSelector

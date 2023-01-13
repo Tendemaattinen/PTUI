@@ -127,15 +127,9 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> SetUserPreferencesAsync([FromBody] UserPreferencesModel preferencesModel)
     {
-        // var userId = User.Identity.GetUserId();
-        // if (!_userService.IsUserSameAsInToken(userId, preferencesModel.UserId))
-        // {
-        //     return Unauthorized();
-        // }
-        
         // TODO: Do this need more custom logic, not hardcoded values?
         if (await _userService.SetUserPreferences(preferencesModel.UserId, preferencesModel.Preferences,
-                preferencesModel.NavbarLocation, UserPreferenceFit.Custom, "numbers"))
+                (NavbarLocation)preferencesModel.NavbarLocation, UserPreferenceFit.Custom, "numbers"))
         {
             return Ok(preferencesModel);
         }
@@ -162,12 +156,6 @@ public class UserController : ControllerBase
     [Authorize]
     public async Task<IActionResult> GetComponentPreference(string tokenUserId, string component, int fit = (int)UserPreferenceFit.Default)
     {
-        // var userId = User.Identity.GetUserId();
-        // if (!_userService.IsUserSameAsInToken(userId, tokenUserId))
-        // {
-        //     return Unauthorized();
-        // }
-        
         return Ok(_userService.GetComponentPreference(tokenUserId, component, (UserPreferenceFit)fit));
     }
     

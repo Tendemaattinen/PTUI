@@ -17,7 +17,7 @@ public interface IUserService
     ApplicationUser GetById(string id);
 
     Task<string> GetUserPreferences(string id, int fit = (int)UserPreferenceFit.Good);
-    Task <bool> SetUserPreferences(string userId, string preferences, int navbarLocation, 
+    Task <bool> SetUserPreferences(string userId, string preferences, NavbarLocation navbarLocation, 
         UserPreferenceFit fit, string pageSelector);
     bool IsUserSameAsInToken(string? userId, string userIdInToken);
     Task<bool> SaveRating(string userId, int rating, string reason, UserPreferenceFit fit);

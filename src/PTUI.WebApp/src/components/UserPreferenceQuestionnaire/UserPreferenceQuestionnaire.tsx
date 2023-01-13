@@ -100,6 +100,7 @@ function UserPreferenceQuestionnaire() {
     }
     
     const [settings, setSettings] = useState<Setting[]>([]);
+    // TODO: Placeholder?
     const [count, setCount] = useState<number>(0);
     
     
@@ -126,109 +127,109 @@ function UserPreferenceQuestionnaire() {
             <Review/>
             
             <h2>Style</h2>
-            <form onSubmit={handleSubmit(setUserStyle)} id={upqStyle.upqStyleForm}>
-                <h3>Background color</h3>
-                <div className={upqStyle.upqStyleFormDivRow}>
-                    <label>Color:</label>
-                    <select {...register('bgColor1')} id={"bgColorListId"}>
-                        {getSettingValues("bg-color").map(item => {
-                            return (<option key={item?.value ?? ""} value={item?.value ?? ""}>{item?.name ?? ""}</option> )
-                        })}
-                    </select>
-                </div>
-                
-                <h3>Complementary color</h3>
-                <div className={upqStyle.upqStyleFormDivRow}>
-                    <label>Color:</label>
-                    <select {...register('complementaryColor1')} id={"complementaryColorListId"}>
-                        {getSettingValues("complementary-color").map(item => {
-                            return (<option key={item.value} value={item.value}>{item.name}</option> )
-                        })}
-                    </select>
-                </div>
-
-                <h3>Header color</h3>
-                <div className={upqStyle.upqStyleFormDivRow}>
-                    <label>Color:</label>
-                    <select {...register('headerColor1')} id={"headerColorSelectId"}>
-                        {getSettingValues("header-color").map(item => {
-                            return (<option key={item.value} value={item.value}>{item.name}</option> )
-                        })}
-                    </select>
-                </div>
-                
-                <h3>Text color</h3>
-                <div className={upqStyle.upqStyleFormDivRow}>
-                    <label>Color:</label>
-                    <select {...register('textColor1')} id={"textColorSelectId"}>
-                        {getSettingValues("text-color").map(item => {
-                            return (<option key={item.value} value={item.value}>{item.name}</option> )
-                        })}
-                    </select>
-                </div>
-                
-                <h3>Navbar location</h3>
-                <div className={upqStyle.upqStyleFormDivRow}>
-                    <label>Location:</label>
-                    <select {...register('navbarLocation')} id={"navbarLocationSelectId"}>
-                        {getSettingValues("navbar-location", SettingType.Navbar).map(item => {
-                            return (<option key={item.value} value={item.value}>{item.name}</option> )
-                        })}
-                    </select>
-                </div>
-
-                <h3>Font</h3>
-                <div className={upqStyle.upqStyleFormDivRow}>
-                    <label>Name:</label>
-                    <select {...register('fontName')} id={"fontNameSelectId"}>
-                        {getSettingValues("font-family").map(item => {
-                            return (<option key={item.value} value={item.value}>{item.name}</option> )
-                        })}
-                    </select>
-                </div>
-
-                <h3>Font size</h3>
-                <div className={upqStyle.upqStyleFormDivRow}>
-                    <label>Size:</label>
-                    <select {...register("fontSize")} id={"fontSizeSelectId"}>
-                        {getSettingValues("font-size-multiplier").map(item => {
-                            return (<option key={item.value} value={item.value}>{item.name}</option> )
-                        })}
-                    </select>
-                </div>
-
-                <h3>Letter spacing</h3>
-                <div className={upqStyle.upqStyleFormDivRow}>
-                    <label>Spacing:</label>
-                    <select {...register("letterSpacing")}>
-                        {getSettingValues("letter-spacing").map(item => {
-                            return (<option key={item.value} value={item.value}>{item.name}</option> )
-                        })}
-                    </select>
-                </div>
-
-                <h3>Line height</h3>
-                <div className={upqStyle.upqStyleFormDivRow}>
-                    <label>Height:</label>
-                    <select {...register("lineHeight")}>
-                        {getSettingValues("line-height").map(item => {
-                            return (<option key={item.value} value={item.value}>{item.name}</option> )
-                        })}
-                    </select>
-                </div>
-
-                <h3>Word spacing</h3>
-                <div className={upqStyle.upqStyleFormDivRow}>
-                    <label>Spacing:</label>
-                    <select {...register("wordSpacing")}>
-                        {getSettingValues("word-spacing").map(item => {
-                            return (<option key={item.value} value={item.value}>{item.name}</option> )
-                        })}
-                    </select>
-                </div>
-                
-                <input type={"submit"} value={"Submit"}/>
-            </form>
+            {/*<form onSubmit={handleSubmit(setUserStyle)} id={upqStyle.upqStyleForm}>*/}
+            {/*    <h3>Background color</h3>*/}
+            {/*    <div className={upqStyle.upqStyleFormDivRow}>*/}
+            {/*        <label>Color:</label>*/}
+            {/*        <select {...register('bgColor1')} id={"bgColorListId"}>*/}
+            {/*            {getSettingValues("bg-color").map(item => {*/}
+            {/*                return (<option key={item?.value ?? ""} value={item?.value ?? ""}>{item?.name ?? ""}</option> )*/}
+            {/*            })}*/}
+            {/*        </select>*/}
+            {/*    </div>*/}
+            {/*    */}
+            {/*    <h3>Complementary color</h3>*/}
+            {/*    <div className={upqStyle.upqStyleFormDivRow}>*/}
+            {/*        <label>Color:</label>*/}
+            {/*        <select {...register('complementaryColor1')} id={"complementaryColorListId"}>*/}
+            {/*            {getSettingValues("complementary-color").map(item => {*/}
+            {/*                return (<option key={item.value} value={item.value}>{item.name}</option> )*/}
+            {/*            })}*/}
+            {/*        </select>*/}
+            {/*    </div>*/}
+            
+            {/*    <h3>Header color</h3>*/}
+            {/*    <div className={upqStyle.upqStyleFormDivRow}>*/}
+            {/*        <label>Color:</label>*/}
+            {/*        <select {...register('headerColor1')} id={"headerColorSelectId"}>*/}
+            {/*            {getSettingValues("header-color").map(item => {*/}
+            {/*                return (<option key={item.value} value={item.value}>{item.name}</option> )*/}
+            {/*            })}*/}
+            {/*        </select>*/}
+            {/*    </div>*/}
+            {/*    */}
+            {/*    <h3>Text color</h3>*/}
+            {/*    <div className={upqStyle.upqStyleFormDivRow}>*/}
+            {/*        <label>Color:</label>*/}
+            {/*        <select {...register('textColor1')} id={"textColorSelectId"}>*/}
+            {/*            {getSettingValues("text-color").map(item => {*/}
+            {/*                return (<option key={item.value} value={item.value}>{item.name}</option> )*/}
+            {/*            })}*/}
+            {/*        </select>*/}
+            {/*    </div>*/}
+            {/*    */}
+            {/*    <h3>Navbar location</h3>*/}
+            {/*    <div className={upqStyle.upqStyleFormDivRow}>*/}
+            {/*        <label>Location:</label>*/}
+            {/*        <select {...register('navbarLocation')} id={"navbarLocationSelectId"}>*/}
+            {/*            {getSettingValues("navbar-location", SettingType.Navbar).map(item => {*/}
+            {/*                return (<option key={item.value} value={item.value}>{item.name}</option> )*/}
+            {/*            })}*/}
+            {/*        </select>*/}
+            {/*    </div>*/}
+            
+            {/*    <h3>Font</h3>*/}
+            {/*    <div className={upqStyle.upqStyleFormDivRow}>*/}
+            {/*        <label>Name:</label>*/}
+            {/*        <select {...register('fontName')} id={"fontNameSelectId"}>*/}
+            {/*            {getSettingValues("font-family").map(item => {*/}
+            {/*                return (<option key={item.value} value={item.value}>{item.name}</option> )*/}
+            {/*            })}*/}
+            {/*        </select>*/}
+            {/*    </div>*/}
+            
+            {/*    <h3>Font size</h3>*/}
+            {/*    <div className={upqStyle.upqStyleFormDivRow}>*/}
+            {/*        <label>Size:</label>*/}
+            {/*        <select {...register("fontSize")} id={"fontSizeSelectId"}>*/}
+            {/*            {getSettingValues("font-size-multiplier").map(item => {*/}
+            {/*                return (<option key={item.value} value={item.value}>{item.name}</option> )*/}
+            {/*            })}*/}
+            {/*        </select>*/}
+            {/*    </div>*/}
+            
+            {/*    <h3>Letter spacing</h3>*/}
+            {/*    <div className={upqStyle.upqStyleFormDivRow}>*/}
+            {/*        <label>Spacing:</label>*/}
+            {/*        <select {...register("letterSpacing")}>*/}
+            {/*            {getSettingValues("letter-spacing").map(item => {*/}
+            {/*                return (<option key={item.value} value={item.value}>{item.name}</option> )*/}
+            {/*            })}*/}
+            {/*        </select>*/}
+            {/*    </div>*/}
+            
+            {/*    <h3>Line height</h3>*/}
+            {/*    <div className={upqStyle.upqStyleFormDivRow}>*/}
+            {/*        <label>Height:</label>*/}
+            {/*        <select {...register("lineHeight")}>*/}
+            {/*            {getSettingValues("line-height").map(item => {*/}
+            {/*                return (<option key={item.value} value={item.value}>{item.name}</option> )*/}
+            {/*            })}*/}
+            {/*        </select>*/}
+            {/*    </div>*/}
+            
+            {/*    <h3>Word spacing</h3>*/}
+            {/*    <div className={upqStyle.upqStyleFormDivRow}>*/}
+            {/*        <label>Spacing:</label>*/}
+            {/*        <select {...register("wordSpacing")}>*/}
+            {/*            {getSettingValues("word-spacing").map(item => {*/}
+            {/*                return (<option key={item.value} value={item.value}>{item.name}</option> )*/}
+            {/*            })}*/}
+            {/*        </select>*/}
+            {/*    </div>*/}
+            {/*    */}
+            {/*    <input type={"submit"} value={"Submit"}/>*/}
+            {/*</form>*/}
         </div>
     );
 }

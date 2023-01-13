@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
@@ -19,7 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 IConfiguration configuration = builder.Configuration;
 
-services.AddControllers();
+services.AddControllers()
+    .AddJsonOptions(options => { options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
@@ -37,6 +39,7 @@ services.Configure<JWTSettings>(configuration.GetSection("JWT"));
 // Dependency injections
 services.AddScoped<IUserService, UserService>();
 services.AddScoped<ISettingsService, SettingsService>();
+services.AddScoped<IPersonalizationService, PersonalizationService>();
 
 // Database
 services.AddDbContext<ApplicationDbContext>(options =>
