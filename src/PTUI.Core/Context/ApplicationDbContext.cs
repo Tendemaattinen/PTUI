@@ -17,6 +17,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<DefaultSetting> DefaultSettings { get; set; }
     public DbSet<PersonalizationQuestion> PersonalizationQuestions { get; set; }
     public DbSet<PersonalizationQuestionAnswer> PersonalizationQuestionAnswers { get; set; }
+    public DbSet<UserBestSuitedAnswer> BestSuitedAnswers { get; set; }
 
 
     public ApplicationDbContext(IConfiguration configuration)
@@ -42,6 +43,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(ur => ur.ApplicationUser)
             .WithMany(au => au.Ratings)
             .HasForeignKey(ur => ur.UserId);
+        
+        modelBuilder.Entity<UserBestSuitedAnswer>()
+            .HasOne(u => u.ApplicationUser)
+            .WithMany(au => au.BestSuitedAnswers)
+            .HasForeignKey(u => u.UserId);
 
         modelBuilder.Entity<SettingValue>()
             .HasOne(sv => sv.Setting)

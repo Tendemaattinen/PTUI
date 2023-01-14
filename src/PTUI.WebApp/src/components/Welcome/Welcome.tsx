@@ -17,24 +17,24 @@ function Welcome() {
         <div id={globalStyle.welcomeComponent}>
             <h1>PTUI- Profile tailored user interfaces</h1>
             <h2>About</h2>
-            <p>Proof of concept, DI work, about profile tailored userinterface, concept how to tailor 
-                user interface according user profile, no user profilization</p>
+            <p>Text about proof of concept</p>
+            {/*<p>Proof of concept, DI work, about profile tailored userinterface, concept how to tailor */}
+            {/*    user interface according user profile, no user profilization</p>*/}
             <h2>Steps</h2>
-            <p>1. Register new user, do not use any real credentials</p>
+            <p>1. Register new user</p>
             <p>2. Login as registered user</p>
-            <p>3. Fill preference quiz (link here)</p>
-            <p>4. Give rating of customazation on questionnare page (link)</p>
-            <p>5. Edit values if needed</p>
-            <p>6. Give rating for new customization</p>
-            <p>7. Continue cycle if want</p>
+            <p>3. Do personalization quiz on personalization page</p>
+            <p>4. Test every version on questionaire page</p>
+            <p>5. Select best suited version on questionaire page</p>
+            <p>6. You can test other variation by doing personalization quiz again</p>
             <p>8. Fill google forms</p>
             <br/>
-            <h2>Tools for testing</h2>
-
-            <h3>Reset</h3>
-            <form onSubmit={handleSubmit(UserInterfaceHelpers.restoreDefaultSettings)}>
-                <button>Restore default settings</button>
-            </form>
+            {/*<h2>Tools for testing</h2>*/}
+            
+            {/*<h3>Reset</h3>*/}
+            {/*<form onSubmit={handleSubmit(UserInterfaceHelpers.restoreDefaultSettings)}>*/}
+            {/*    <button>Restore default settings</button>*/}
+            {/*</form>*/}
             
         </div>
     );

@@ -27,4 +27,5 @@ public interface IUserService
     string GetComponentPreference(string userId, string component, UserPreferenceFit fit);
     UserPreferenceFit GetUserPreferenceFit(string userId);
     Task<bool> SetUserPreferenceFit(string userId, UserPreferenceFit fit);
+    Task<bool> SaveBestSuitedVersionAsync(string userId, UserPreferenceFit fit);
 }

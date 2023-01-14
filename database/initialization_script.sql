@@ -106,6 +106,9 @@ values (gen_random_uuid(), 'navbar-location', 'Location of the navigation bar');
 insert into "PersonalizationQuestions" ("Id", "Name", "Text")
 values (gen_random_uuid(), 'page-selector-type', 'Type of the page selector');
 
+insert into "PersonalizationQuestions" ("Id", "Name", "Text")
+values (gen_random_uuid(), 'text-color', 'Color of the text');
+
 
 -- QUESTION ANSWERS --
 
@@ -154,8 +157,6 @@ values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WH
 insert into "PersonalizationQuestionAnswers" ("Id", "QuestionId", "Name", "Text", "Image")
 values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WHERE PQ."Name" = 'navbar-location'), 'right', 'Right', null);
 
-
-
 insert into "PersonalizationQuestionAnswers" ("Id", "QuestionId", "Name", "Text", "Image")
 values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WHERE PQ."Name" = 'page-selector-type'), 'command-line', 'Command line', null);
 
@@ -170,3 +171,9 @@ values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WH
 
 insert into "PersonalizationQuestionAnswers" ("Id", "QuestionId", "Name", "Text", "Image")
 values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WHERE PQ."Name" = 'page-selector-type'), 'radio', 'Radio', null);
+
+insert into "PersonalizationQuestionAnswers" ("Id", "QuestionId", "Name", "Text", "Image")
+values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WHERE PQ."Name" = 'text-color'), 'black', 'Black', null);
+
+insert into "PersonalizationQuestionAnswers" ("Id", "QuestionId", "Name", "Text", "Image")
+values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WHERE PQ."Name" = 'text-color'), 'white', 'White', null);

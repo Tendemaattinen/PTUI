@@ -151,6 +151,18 @@ public class UserController : ControllerBase
         await _userService.SaveRating(ratingModel.UserId, rating, ratingModel.Reason, ratingModel.Fit);
         return Ok();
     }
+    
+    [HttpPost("saveBestSuitedAnswer")]
+    [Authorize]
+    public async Task<IActionResult> SaveBestSuitedAnswerAsync([FromBody] BestSuitedAnswerModel model)
+    {
+        if (!(int.TryParse(model.BestSuitedVersion, out var bestSuitedVersion)))
+        {
+            return BadRequest("Invalid rating");
+        }
+        await _userService.SaveBestSuitedVersionAsync(model.UserId, (UserPreferenceFit)bestSuitedVersion);
+        return Ok();
+    }
 
     [HttpGet("componentPreference")]
     [Authorize]

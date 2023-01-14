@@ -8,6 +8,7 @@ import Editor from "../Editor/Editor";
 import UserInterfaceHelpers from "../../helpers/UserInterfaceHelpers";
 import {useAppSelector} from "../../hooks/hooks";
 import ContentPage2 from "../ContentPage2/ContentPage2";
+import style from "./ExampleContent.module.scss";
 
 function ExampleContent() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -116,7 +117,7 @@ function ExampleContent() {
 
             {(pageSelector === 'numbers'.toLowerCase())
                 ?
-                <div>
+                <div className={style.pageSelectorDiv}>
                 {Array.from(Array(maxPages).keys()).map(x => ++x).map(pageNumber => {
                         return (<button onClick={() => setCurrentPage(pageNumber)}>Page {pageNumber}</button>)
                     })}
@@ -127,7 +128,7 @@ function ExampleContent() {
 
             {(pageSelector === 'arrows'.toLowerCase())
                 ?
-                <div>
+                <div className={style.pageSelectorDiv}>
                     <button onClick={() => previousPage()}>Previous</button>
                     <button onClick={() => nextPage()}>Next</button>
                 </div>
@@ -137,7 +138,7 @@ function ExampleContent() {
 
             {(pageSelector === 'command-line'.toLowerCase())
                 ?
-                <div>
+                <div className={style.pageSelectorDiv}>
                     <form onSubmit={handleSubmit(submitConsoleForm)}>
                         <input type={'text'} {...register('consoleInput')}></input>
                         <button>Submit</button>
@@ -149,7 +150,7 @@ function ExampleContent() {
 
             {(pageSelector === 'dropdown'.toLowerCase())
                 ?
-                <div>
+                <div className={style.pageSelectorDiv}>
                     <select onChange={() => changePageDropDown()} id={"pageSelectorDropdown"}>
                         {Array.from(Array(maxPages).keys()).map(x => ++x).map(item => {
                             return (<option key={item} value={item}>{item}</option> )
@@ -163,7 +164,7 @@ function ExampleContent() {
             {(pageSelector === 'radio'.toLowerCase())
                 ?
                 <div>
-                    <form>
+                    <form className={style.pageSelectorDiv}>
                         <label htmlFor={'changePageRadio1'}>
                             <input id={'changePageRadio1'} name={'changePageRadio'} type={"radio"} value={1}
                                    onClick={() => setCurrentPage(1)}/>

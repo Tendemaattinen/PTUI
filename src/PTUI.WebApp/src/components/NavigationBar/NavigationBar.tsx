@@ -47,7 +47,7 @@ function NavigationBar() {
                                 <Link className={globalStyle.navbarLink} to="/personalization">Personalization</Link>
                                 <Link className={globalStyle.navbarLink} to="/questionnaire">Questionnaire</Link>
                                 <Link className={globalStyle.navbarLink} to="/exampleContent">Example content page</Link>
-                                <a href={"#"} className={globalStyle.navbarLink}>{userName}</a>
+                                <p className={globalStyle.navbarLink}>{userName}</p>
                                 <a href={"#"} className={globalStyle.navbarLink} onClick={logoutUser}>Logout</a>
                             </>
                             :

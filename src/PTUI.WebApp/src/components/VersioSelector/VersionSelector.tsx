@@ -33,7 +33,7 @@ function VersionSelector() {
     
     return (
         <div id={style.versionSelectorDiv}>
-            <h2>Choose version: (TODO: Better text)</h2>
+            <h2>Select a version</h2>
             <form id={style.versionSelectorForm}>
                 <div id={style.versionSelectorFormDiv}>
                     <label htmlFor={'preferenceTypeRadio4'}>
@@ -58,11 +58,6 @@ function VersionSelector() {
                     </label>
                 </div>
             </form>
-
-            <p>Choose best one (needed?)</p>
-            <p>Radio button</p>
-            <p>Submit review button</p>
-
         </div>
     );
 }

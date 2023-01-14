@@ -193,6 +193,26 @@ public class PersonalizationService: IPersonalizationService
                 break;
         }
         
+        // text color
+        switch (answerObject["text-color"]?.ToString() ?? "")
+        {
+            case "black":
+                settingsObjGood["text-color"] = "black";
+                settingsObjAverage["text-color"] = "gray";
+                settingsObjBad["text-color"] = "white";
+                break;
+            case "white":
+                settingsObjGood["text-color"] = "white";
+                settingsObjAverage["text-color"] = "gray";
+                settingsObjBad["text-color"] = "black";
+                break;
+            default:
+                settingsObjGood["text-color"] = "black";
+                settingsObjAverage["text-color"] = "gray";
+                settingsObjBad["text-color"] = "white";
+                break;
+        }
+        
 
         cssSettingsList.Add(new KeyValuePair<UserPreferenceFit, JsonObject>(UserPreferenceFit.Good, settingsObjGood));
         cssSettingsList.Add(new KeyValuePair<UserPreferenceFit, JsonObject>(UserPreferenceFit.Average, settingsObjAverage));

@@ -423,6 +423,41 @@ public class UserService : IUserService
             return false;
         }
     }
+    
+    public async Task<bool> SaveBestSuitedVersionAsync(string userId, UserPreferenceFit fit)
+    {
+        try
+        {
+            var maxVersion = GetUserPreferencesMaxVersion(userId, fit);
+            var existing = _context.BestSuitedAnswers.FirstOrDefault(x => x.UserId == userId && x.UserPreferenceVersion == maxVersion) ?? null;
+
+            if (existing != null)
+            {
+                existing.UserPreferenceFit = (int)fit;
+                _context.Update(existing);
+            }
+            else
+            {
+                var bestSuitedVersion = new UserBestSuitedAnswer()
+                {
+                    Id = new Guid(),
+                    UserId = userId,
+                    Timestamp = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
+                    UserPreferenceVersion = maxVersion,
+                    UserPreferenceFit = (int)fit
+                };
+                _context.Add(bestSuitedVersion);
+            }
+            
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            // TODO: Improve error handling
+            return false;
+        }
+    }
 }
 
 

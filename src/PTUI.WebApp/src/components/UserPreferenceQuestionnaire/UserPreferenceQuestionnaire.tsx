@@ -118,15 +118,15 @@ function UserPreferenceQuestionnaire() {
 
     return(
         <div id={upqStyle.upqComponent}>
-            <h1>Preference questionnaire</h1>
-            <h2>Info</h2>
-            <p>Create some kind of info box here.</p>
+            <h1>Testing page</h1>
+            {/*<h2>Info</h2>*/}
+            {/*<p>Create some kind of info box here.</p>*/}
             
             <VersionSelector/>
             
             <Review/>
             
-            <h2>Style</h2>
+            {/*<h2>Style</h2>*/}
             {/*<form onSubmit={handleSubmit(setUserStyle)} id={upqStyle.upqStyleForm}>*/}
             {/*    <h3>Background color</h3>*/}
             {/*    <div className={upqStyle.upqStyleFormDivRow}>*/}
