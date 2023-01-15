@@ -26,8 +26,8 @@ function Welcome() {
             <p>3. Do personalization quiz on personalization page</p>
             <p>4. Test every version on questionaire page</p>
             <p>5. Select best suited version on questionaire page</p>
-            <p>6. You can test other variation by doing personalization quiz again</p>
-            <p>8. Fill google forms</p>
+            <p>6. You can test other variations by doing personalization quiz again</p>
+            {/*<p>8. Fill google forms</p>*/}
             <br/>
             {/*<h2>Tools for testing</h2>*/}
             

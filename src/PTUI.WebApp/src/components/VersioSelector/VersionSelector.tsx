@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import style from "./VersionSelector.module.scss";
 import {useAppDispatch, useAppSelector} from "../../hooks/hooks";
 import {FieldValues, useForm} from "react-hook-form";
@@ -11,6 +11,8 @@ function VersionSelector() {
     const dispatch = useAppDispatch();
     const { register, handleSubmit, formState: { errors } } = useForm();
     
+    const [prefType, setPrefType] = useState(preferenceType);
+    
     useEffect(() => {
         (document.getElementById('preferenceTypeRadio' + preferenceType) as HTMLInputElement).checked = true;
     }, [preferenceType]);
@@ -18,8 +20,8 @@ function VersionSelector() {
     useEffect(() => {
         const asyncWrapper = async () => {
             let userId: string = localStorage.getItem('userId') ?? "";
-            let type = await UserInterfaceHelpers.getUserPreferenceFit(userId);
-            (document.getElementById('preferenceTypeRadio' + type) as HTMLInputElement).checked = true;
+            //let type = await UserInterfaceHelpers.getUserPreferenceFit(userId);
+            (document.getElementById('preferenceTypeRadio' + prefType) as HTMLInputElement).checked = true;
         }
         
         asyncWrapper()
@@ -29,6 +31,7 @@ function VersionSelector() {
         dispatch(changePreference(type));
         await UserInterfaceHelpers.setUserPreferenceFit(UserInterfaceHelpers.getUserId(), type);
         await UserInterfaceHelpers.setUserPreferencesFromDatabase(UserInterfaceHelpers.getUserId(), type)
+        setPrefType(type);
     }
     
     return (
