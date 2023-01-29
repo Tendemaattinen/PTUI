@@ -20,8 +20,8 @@ function VersionSelector() {
     useEffect(() => {
         const asyncWrapper = async () => {
             let userId: string = localStorage.getItem('userId') ?? "";
-            //let type = await UserInterfaceHelpers.getUserPreferenceFit(userId);
-            (document.getElementById('preferenceTypeRadio' + prefType) as HTMLInputElement).checked = true;
+            let type = await UserInterfaceHelpers.getUserPreferenceFit(userId);
+            setPrefType(Number(type));
         }
         
         asyncWrapper()

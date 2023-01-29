@@ -13,10 +13,16 @@ import Review from "../Review/Review";
 import VersionSelector from "../VersioSelector/VersionSelector";
 
 function UserPreferenceQuestionnaire() {
-
     const { preferenceType } = useAppSelector((state) => state.preference)
-    
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const [settings, setSettings] = useState<Setting[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            return await getSettingsFromDB();
+        }
+        fetchData();
+    }, []);
     
     const setUserStyle = async (formData: FieldValues) => {
         let style = createStyleJson(formData);
@@ -68,7 +74,6 @@ function UserPreferenceQuestionnaire() {
                 // TODO: Error
             }
         }
-        
     }
     
     const getSettingsFromDB = async () => {
@@ -99,23 +104,10 @@ function UserPreferenceQuestionnaire() {
         
     }
     
-    const [settings, setSettings] = useState<Setting[]>([]);
-    // TODO: Placeholder?
-    const [count, setCount] = useState<number>(0);
-    
-    
     const getSettingValues = (settingName: string, settingType: SettingType = SettingType.Css) => {
         return settings.filter(x => x.name === settingName && x.type === settingType as number)[0]?.values ?? [];
     }
     
-    useEffect(() => {
-        const fetchData = async () => {
-            return await getSettingsFromDB();
-        }
-        fetchData();
-    }, [count]);
-    
-
     return(
         <div id={upqStyle.upqComponent}>
             <h1>Testing page</h1>

@@ -64,6 +64,9 @@ public class PersonalizationController : ControllerBase
     [HttpPost("personalization")]
     public async Task<IActionResult> PersonalizationAsync(PersonalizationModel model)
     {
+        
+        // TODO: Remove after new method is ready
+        #region Old Code
 
         var settingsObject = new JsonObject();
 
@@ -231,6 +234,9 @@ public class PersonalizationController : ControllerBase
             NavbarLocation.Right,
             UserPreferenceFit.Bad,
             "commandline");
+        
+
+        #endregion
         
         return Ok(settingsObject);
     }

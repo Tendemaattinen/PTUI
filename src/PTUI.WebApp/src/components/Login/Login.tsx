@@ -7,6 +7,7 @@ import {useNavigate} from "react-router-dom";
 
 import styles from './Login.module.scss';
 import globalStyle from '../../assets/styles/globalStyle.module.scss';
+import UserInterfaceHelpers from "../../helpers/UserInterfaceHelpers";
 
 function Login() {
     const { userName, loading, error } = useAppSelector((state) => state.user)
@@ -23,9 +24,18 @@ function Login() {
     }
     
     useEffect(() => {
-        if (userName != null) {
-            navigate('/');
+        
+        const asyncWrapper = async () => {
+            if (userName != null) {
+                let versionType: number = Number(await UserInterfaceHelpers.getUserPreferenceFit(UserInterfaceHelpers.getUserId()));
+                await UserInterfaceHelpers.setUserPreferencesFromDatabase(UserInterfaceHelpers.getUserId(), versionType)
+
+                navigate('/');
+            }
         }
+        
+        asyncWrapper();
+        
     }, [navigate, userName])
     
     useEffect(() => {

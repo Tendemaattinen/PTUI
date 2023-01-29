@@ -17,13 +17,10 @@ import {Question} from "../../interfaces/Question";
 function UserPersonalization() {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
-
     const [submitAnswerSuccess, setSubmitAnswerSuccess] = useState<boolean>(false);
-
-    //let submitAnswerSuccess: boolean = false;
+    const [questions, setQuestions] = useState<Question[]>([]);
     
     const submitForm = async (formData:  FieldValues) => {
-        // TODO: Send to backend
         const url: string = process.env.REACT_APP_API_BASE_URL + "personalization";
         const content: string = JSON.stringify({username: localStorage.getItem('user') ?? "",
             interface: formData.interface , os: formData.os, time: formData.time, element: formData.element,
@@ -42,11 +39,6 @@ function UserPersonalization() {
                 console.log("Error: " + error);
             })
     }
-
-    const [questions, setQuestions] = useState<Question[]>([]);
-    // TODO: Placeholder?
-    const [count, setCount] = useState<number>(0);
-    //const [defaultChecked, setDefaultChecked] = useState<number>(false);
     
     const getQuestions = async () => {
         const url: string = process.env.REACT_APP_API_BASE_URL + "personalizationQuestion";
@@ -98,7 +90,7 @@ function UserPersonalization() {
             return await getQuestions();
         }
         fetchData()
-    }, [count])
+    }, [])
 
     useEffect(() => {
         if (questions.length < 1) {

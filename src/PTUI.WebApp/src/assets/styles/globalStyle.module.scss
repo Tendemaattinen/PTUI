@@ -21,6 +21,16 @@
   --word-spacing: 0em;
 }
 
+html {
+  overflow: hidden;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  overflow: auto;
+}
+
 // Global settings, applies to everywhere 
 html * {
 

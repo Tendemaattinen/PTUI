@@ -260,7 +260,7 @@ public class UserService : IUserService
         return pref;
     }
 
-    private string GetDefaultPreferences()
+    public string GetDefaultPreferences()
     {
         var settingsObject = new JsonObject();
         var settings = _context.Settings.Where(x => x.Type == (int)SettingType.Css);

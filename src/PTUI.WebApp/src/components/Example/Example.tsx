@@ -5,11 +5,9 @@ import './Example.module.scss';
 
 function Example() {
     return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <Counter />
-            </header>
+        <div>
+            <h1>Counter</h1>
+            <Counter />
         </div>
     );
 }

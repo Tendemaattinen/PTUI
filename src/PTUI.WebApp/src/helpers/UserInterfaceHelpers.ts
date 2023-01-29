@@ -131,10 +131,6 @@ export class UserInterfaceHelpers {
         // Navbar preference
         let navbarLocationPreference = await this.getComponentPreference(userId, 'navbar', preferenceType);
         await UserInterfaceHelpers.setNavbarLocation(navbarLocationPreference);
-
-        // Page selector preference
-        // TODO: Change page selector
-        let pageSelectorPreference = await this.getComponentPreference(userId, 'pageselector', preferenceType);
     }
     
     static getUserPreferenceFit = async (userId: string) => {
@@ -179,6 +175,34 @@ export class UserInterfaceHelpers {
     
     static getUserId = () => {
         return localStorage.getItem('userId') ?? "";
+    }
+    
+    static setDefaultSettings = async (userId: (string | null)) => {
+        if (userId != null) {
+            await this.setUserPreferenceFit(userId, 4);
+        }
+        
+        let preferencesJson = await this.getDefaultCssSettings();
+        UserInterfaceHelpers.setUserStyle(JSON.stringify(preferencesJson));
+
+        await UserInterfaceHelpers.setNavbarLocation('top');
+    }
+    
+    static getDefaultCssSettings = async () => {
+        const url: string = UserInterfaceHelpers.formUrlAddress("defaultPreference");
+        let defaultPreferenceJson : string = "";
+        await axios.get(url, {
+            headers: {
+                'Authorization': "Bearer " + localStorage.getItem("token") ?? "",
+            }})
+            .then(function (response) {
+                defaultPreferenceJson = response.data;
+            })
+            .catch(function(error) {
+                //alert("Getting " + component + " preference failed to error: " + error);
+                console.error(error);
+            })
+        return defaultPreferenceJson;
     }
 }
 

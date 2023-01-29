@@ -77,11 +77,11 @@ function ExampleContent() {
             case 'third':
                 setCurrentPage(3);
                 break;
-            case '4':
-            case 'four':
-            case 'fourth':
-                setCurrentPage(3);
-                break;
+            // case '4':
+            // case 'four':
+            // case 'fourth':
+            //     setCurrentPage(3);
+            //     break;
             case 'previous':
                 previousPage();
                 break;
@@ -179,11 +179,6 @@ function ExampleContent() {
                             <input id={'changePageRadio3'} name={'changePageRadio'} type={"radio"} value={3}
                                    onClick={() => setCurrentPage(3)}/>
                             Page 3
-                        </label>
-                        <label htmlFor={'changePageRadio4'}>
-                            <input id={'changePageRadio4'} name={'changePageRadio'} type={"radio"} value={4}
-                                   onClick={() => setCurrentPage(4)}/>
-                            Page 4
                         </label>
                     </form>
                 </div>

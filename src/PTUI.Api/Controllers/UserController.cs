@@ -189,5 +189,11 @@ public class UserController : ControllerBase
         }
         return Ok();
     }
+    
+    [HttpGet("defaultPreference")]  
+    public async Task<IActionResult> GetDefaultPreference()
+    {
+        return Ok(_userService.GetDefaultPreferences());
+    }
 
 }

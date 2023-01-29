@@ -8,6 +8,7 @@ import style from './NavigationBar.module.scss';
 import globalStyle from '../../assets/styles/globalStyle.module.scss';
 
 import {useAppDispatch, useAppSelector} from "../../hooks/hooks";
+import UserInterfaceHelpers from "../../helpers/UserInterfaceHelpers";
 
 function NavigationBar() {
     
@@ -32,6 +33,11 @@ function NavigationBar() {
         navigate('login');
     }
     
+    const resetSettings = async () => {
+        let userId: (string | null) = localStorage.getItem('userId') ?? null;
+        await UserInterfaceHelpers.setDefaultSettings(userId);
+    }
+    
     return (
         <>
             <div id={'navbar'} ref={navbarRef} className={`${globalStyle.navbar} ${globalStyle.topNavbar}`}>
@@ -47,11 +53,13 @@ function NavigationBar() {
                                 <Link className={globalStyle.navbarLink} to="/personalization">Personalization</Link>
                                 <Link className={globalStyle.navbarLink} to="/questionnaire">Questionnaire</Link>
                                 <Link className={globalStyle.navbarLink} to="/exampleContent">Example content page</Link>
+                                <a href={"#"} className={globalStyle.navbarLink} onClick={() => resetSettings()}>Reset settings</a>
                                 <p className={globalStyle.navbarLink}>{userName}</p>
                                 <a href={"#"} className={globalStyle.navbarLink} onClick={logoutUser}>Logout</a>
                             </>
                             :
                             <>
+                                <a href={"#"} className={globalStyle.navbarLink} onClick={() => resetSettings()}>Reset settings</a>
                                 <Link className={globalStyle.navbarLink} to="/register">Register</Link>
                                 <Link className={globalStyle.navbarLink} to="/login">Login</Link>
                             </>

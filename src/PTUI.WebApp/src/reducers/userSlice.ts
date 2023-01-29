@@ -28,20 +28,14 @@ const userSlice = createSlice({
             state.error = null;
             state.success = false;
             
-            // TODO: Async?
-            UserInterfaceHelpers.restoreDefaultSettings();
+            const asyncWrapper = async () => {
+                await UserInterfaceHelpers.setDefaultSettings(null);
+            }
+            
+            asyncWrapper();
         },
         changePreference: (state, action: PayloadAction<number>) => {
             state.preferenceType = action.payload;
-            // TODO: Change UI
-            // let data = UserInterfaceHelpers.getUserSettings(
-            //     localStorage.getItem('userId') ?? "",
-            //     state.preferenceType);
-            // UserInterfaceHelpers.setUserStyle(data);
-
-            // TODO: Change nav bar
-
-            // TODO: Change page selector
         },
         logAfterRefresh: (state) => {
             state.userToken = localStorage.getItem('token');
