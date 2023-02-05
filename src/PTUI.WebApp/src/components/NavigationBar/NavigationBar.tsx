@@ -2,7 +2,7 @@
 import { useEffect } from 'react'
 import {Link, Navigate, useNavigate} from "react-router-dom";
 
-import { logout } from "../../reducers/userSlice"
+import {changePreference, logout} from "../../reducers/userSlice"
 
 import style from './NavigationBar.module.scss';
 import globalStyle from '../../assets/styles/globalStyle.module.scss';
@@ -36,6 +36,7 @@ function NavigationBar() {
     const resetSettings = async () => {
         let userId: (string | null) = localStorage.getItem('userId') ?? null;
         await UserInterfaceHelpers.setDefaultSettings(userId);
+        dispatch(changePreference(4)); //TODO: Test this
     }
     
     return (
@@ -54,7 +55,7 @@ function NavigationBar() {
                                 <Link className={globalStyle.navbarLink} to="/questionnaire">Questionnaire</Link>
                                 <Link className={globalStyle.navbarLink} to="/exampleContent">Example content page</Link>
                                 <a href={"#"} className={globalStyle.navbarLink} onClick={() => resetSettings()}>Reset settings</a>
-                                <p className={globalStyle.navbarLink}>{userName}</p>
+                                <a href={"#"} className={globalStyle.navbarLink}>{userName}</a>
                                 <a href={"#"} className={globalStyle.navbarLink} onClick={logoutUser}>Logout</a>
                             </>
                             :
