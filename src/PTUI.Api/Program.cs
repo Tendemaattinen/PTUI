@@ -40,6 +40,7 @@ services.Configure<JWTSettings>(configuration.GetSection("JWT"));
 services.AddScoped<IUserService, UserService>();
 services.AddScoped<ISettingsService, SettingsService>();
 services.AddScoped<IPersonalizationService, PersonalizationService>();
+services.AddScoped<HelperService>();
 
 // Database
 services.AddDbContext<ApplicationDbContext>(options =>

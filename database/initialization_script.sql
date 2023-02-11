@@ -177,3 +177,177 @@ values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WH
 
 insert into "PersonalizationQuestionAnswers" ("Id", "QuestionId", "Name", "Text", "Image")
 values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WHERE PQ."Name" = 'text-color'), 'white', 'White', null);
+
+
+
+-- Dynamic Personalization
+
+-- bg-color hue
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'blue' AND PQ."Name" = 'color'),
+    'css', 'color', 'hue', 'bg-color', '240', '120', '0');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'red' AND PQ."Name" = 'color'),
+    'css', 'color', 'hue', 'bg-color', '0', '120', '240');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'green' AND PQ."Name" = 'color'),
+    'css', 'color', 'hue', 'bg-color', '120', '240', '0');
+
+-- bg-color saturation
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'colorful' AND PQ."Name" = 'saturation'),
+    'css', 'color', 'saturation', 'bg-color', '50', '70', '80');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'medium' AND PQ."Name" = 'saturation'),
+    'css', 'color', 'saturation', 'bg-color', '70', '80', '50');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'colorless' AND PQ."Name" = 'saturation'),
+    'css', 'color', 'saturation', 'bg-color', '80', '70', '50');
+
+
+-- nav-bar
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'top' AND PQ."Name" = 'navbar-location'),
+    'navbar', null, null, null, 'top', 'left', 'right');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'left' AND PQ."Name" = 'navbar-location'),
+    'navbar', null, null, null, 'left', 'right', 'top');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'right' AND PQ."Name" = 'navbar-location'),
+    'navbar', null, null, null, 'right', 'left', 'top');
+
+-- page selector
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'command-line' AND PQ."Name" = 'page-selector-type'),
+    'pageSelector', null, null, null, 'command-line', 'arrows', 'numbers');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'numbers' AND PQ."Name" = 'page-selector-type'),
+    'pageSelector', null, null, null, 'numbers', 'arrows', 'command-line');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'arrows' AND PQ."Name" = 'page-selector-type'),
+    'pageSelector', null, null, null, 'arrows', 'numbers', 'command-line');
+
+-- font
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'arial' AND PQ."Name" = 'font'),
+    'css', 'font-family', null, 'font-family', 'arial', 'helvetica', 'times');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'helvetica' AND PQ."Name" = 'font'),
+    'css', 'font-family', null, 'font-family', 'helvetica', 'arial', 'times');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'times' AND PQ."Name" = 'font'),
+    'css', 'font-family', null, 'font-family', 'times', 'helvetica', 'arial');
+
+-- font size
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'small' AND PQ."Name" = 'font-size'),
+    'css', 'font-size-multiplier', null, 'font-size-multiplier' , '0.75', '1', '1.25');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'default' AND PQ."Name" = 'font-size'),
+    'css', 'font-size-multiplier', null, 'font-size-multiplier', '1', '1.25', '0.75');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'big' AND PQ."Name" = 'font-size'),
+    'css', 'font-size-multiplier', null, 'font-size-multiplier', '1.25', '1', '0.75');
+
+
+-- text color
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'white' AND PQ."Name" = 'text-color'),
+    'css', 'text-color', null, 'text-color', 'white', 'white', 'black');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'black' AND PQ."Name" = 'text-color'),
+    'css', 'text-color', null, 'text-color', 'black', 'black', 'white');
+

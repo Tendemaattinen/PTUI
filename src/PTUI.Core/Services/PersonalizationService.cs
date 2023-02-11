@@ -11,10 +11,12 @@ namespace PTUI.Core.Services;
 public class PersonalizationService: IPersonalizationService
 {
     private readonly ApplicationDbContext _context;
+    private readonly HelperService _helperService;
     
-    public PersonalizationService(ApplicationDbContext context)
+    public PersonalizationService(ApplicationDbContext context, HelperService helperService)
     {
         _context = context;
+        _helperService = helperService;
     }
 
     public async Task<IEnumerable<PersonalizationQuestion>> GetPersonalizationQuestions()
@@ -22,7 +24,8 @@ public class PersonalizationService: IPersonalizationService
         return await _context.PersonalizationQuestions.Include(x => x.Answers).ToListAsync();
     }
 
-    public async Task<CalculatedPersonalizationModel> CalculatePersonalization(string userId, JsonObject answerObject)
+    public async Task<CalculatedPersonalizationModel> CalculateDynamicPersonalization(string userId,
+        JsonObject answerObject)
     {
         var calculatedPersonalizationModel = new CalculatedPersonalizationModel();
         var cssSettingsList = new List<KeyValuePair<UserPreferenceFit, JsonObject>>();
@@ -31,196 +34,118 @@ public class PersonalizationService: IPersonalizationService
         var settingsObjGood = new JsonObject();
         var settingsObjAverage = new JsonObject();
         var settingsObjBad = new JsonObject();
+        var colorsList = new List<KeyValuePair<string, ColorVersions>>();
 
-        var bgBest = new HSLColor();
-        var bgAverage = new HSLColor();
-        var bgWorst = new HSLColor();
-        
-        // background color
-        switch (answerObject["color"]?.ToString() ?? "")
-        {
-            case "red":
-                bgBest.Hue = 0;
-                bgAverage.Hue = 120;
-                bgWorst.Hue = 240;
-                break;
-            case "blue":
-                bgBest.Hue = 240;
-                bgAverage.Hue = 120;
-                bgWorst.Hue = 0;
-                break;
-            case "green":
-                bgBest.Hue = 120;
-                bgAverage.Hue = 240;
-                bgWorst.Hue = 0;
-                break;
-            default:
-                break;
-        }
-        
-        switch (answerObject["saturation"]?.ToString() ?? "")
-        {
-            case "colorful":
-                bgBest.Lightness = 50;
-                bgAverage.Lightness = 70;
-                bgWorst.Lightness = 80;
-                break;
-            case "medium":
-                bgBest.Lightness = 70;
-                bgAverage.Lightness = 80;
-                bgWorst.Lightness = 50;
-                break;
-            case "colorless":
-                bgBest.Lightness = 80;
-                bgAverage.Lightness = 70;
-                bgWorst.Lightness = 50;
-                break;
-            default:
-                break;
-        }
+        // Get all dynamic personalization
+        var dynamicPersonalizationList = await _context.DynamicPersonalizations
+            .Include(x => x.Answer)
+            .Include(y => y.Answer.Question)
+            .ToListAsync();
 
-        settingsObjGood["bg-color"] = bgBest.GetValue();
-        settingsObjAverage["bg-color"] = bgAverage.GetValue();
-        settingsObjBad["bg-color"] = bgWorst.GetValue();
-        
-        // font
-        switch (answerObject["font"]?.ToString() ?? "")
+        // Loop through answers
+        foreach (var answer in answerObject)
         {
-            case "arial":
-                settingsObjGood["font-family"] = "arial";
-                settingsObjAverage["font-family"] = "helvetica";
-                settingsObjBad["font-family"] = "times";
-                break;
-            case "helvetica":
-                settingsObjGood["font-family"] = "helvetica";
-                settingsObjAverage["font-family"] = "arial";
-                settingsObjBad["font-family"] = "times";
-                break;
-            case "times":
-                settingsObjGood["font-family"] = "times";
-                settingsObjAverage["font-family"] = "helvetica";
-                settingsObjBad["font-family"] = "arial";
-                break;
-            default:
-                settingsObjGood["font-family"] = "arial";
-                settingsObjAverage["font-family"] = "helvetica";
-                settingsObjBad["font-family"] = "times";
-                break;
-        }
-        
-        // font size
-        switch (answerObject["font-size"]?.ToString() ?? "")
-        {
-            case "small":
-                settingsObjGood["font-size-multiplier"] = 0.75;
-                settingsObjAverage["font-size-multiplier"] = 1;
-                settingsObjBad["font-size-multiplier"] = 1.25;
-                break;
-            case "default":
-                settingsObjGood["font-size-multiplier"] = 1;
-                settingsObjAverage["font-size-multiplier"] = 0.75;
-                settingsObjBad["font-size-multiplier"] = 1.25;
-                break;
-            case "big":
-                settingsObjGood["font-size-multiplier"] = 1.25;
-                settingsObjAverage["font-size-multiplier"] = 1;
-                settingsObjBad["font-size-multiplier"] = 0.75;
-                break;
-            default:
-                settingsObjGood["font-size-multiplier"] = 1;
-                settingsObjAverage["font-size-multiplier"] = 0.75;
-                settingsObjBad["font-size-multiplier"] = 1.25;
-                break;
-        }
-        
-        // navbar location
-        switch (answerObject["navbar-location"]?.ToString() ?? "")
-        {
-            case "top":
-                navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Good, NavbarLocation.Top));
-                navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Average, NavbarLocation.Left));
-                navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Bad, NavbarLocation.Right));
-                break;
-            case "right":
-                navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Good, NavbarLocation.Right));
-                navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Average, NavbarLocation.Left));
-                navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Bad, NavbarLocation.Top));
-                break;
-            case "left":
-                navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Good, NavbarLocation.Left));
-                navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Average, NavbarLocation.Right));
-                navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Bad, NavbarLocation.Top));
-                break;
-            default:
-                navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Good, NavbarLocation.Top));
-                navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Average, NavbarLocation.Left));
-                navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Bad, NavbarLocation.Right));;
-                break;
-        }
-        
-        // page selector
-        switch (answerObject["page-selector-type"]?.ToString() ?? "")
-        {
-            case "command-line":
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Good, "command-line"));
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Average, "numbers"));
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Bad, "radio"));
-                break;
-            case "numbers":
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Good, "numbers"));
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Average, "radio"));
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Bad, "command-line"));
-                break;
-            case "arrows":
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Good, "arrows"));
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Average, "numbers"));
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Bad, "command-line"));
-                break;
-            case "dropdown":
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Good, "dropdown"));
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Average, "radio"));
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Bad, "arrows"));
-                break;
-            case "radio":
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Good, "radio"));
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Average, "dropdown"));
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Bad, "command-line"));
-                break;
-            default:
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Good, "numbers"));
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Average, "radio"));
-                pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Bad, "command-line"));
-                break;
-        }
-        
-        // text color
-        switch (answerObject["text-color"]?.ToString() ?? "")
-        {
-            case "black":
-                settingsObjGood["text-color"] = "black";
-                settingsObjAverage["text-color"] = "gray";
-                settingsObjBad["text-color"] = "white";
-                break;
-            case "white":
-                settingsObjGood["text-color"] = "white";
-                settingsObjAverage["text-color"] = "gray";
-                settingsObjBad["text-color"] = "black";
-                break;
-            default:
-                settingsObjGood["text-color"] = "black";
-                settingsObjAverage["text-color"] = "gray";
-                settingsObjBad["text-color"] = "white";
-                break;
-        }
-        
+            var personalization = dynamicPersonalizationList.FirstOrDefault(x =>
+                x.Answer.Question.Name == answer.Key && x.Answer.Name == answer.Value.ToString());
 
+            if (personalization == null)
+            {
+                continue;
+            }
+            
+            switch (personalization.Type)
+            {
+                case "css":
+                    switch (personalization.SubType)
+                    {
+                        case "color":
+                            if (colorsList.FirstOrDefault(x => x.Key == personalization.Target).Value is null)
+                            {
+                                var colorVersion = new ColorVersions
+                                {
+                                    Best = new HSLColor
+                                    {
+                                        Hue = 0, Saturation = 0, Lightness = 70
+                                    },
+                                    Average = new HSLColor
+                                    {
+                                        Hue = 0, Saturation = 0, Lightness = 70
+                                    },
+                                    Worst = new HSLColor
+                                    {
+                                        Hue = 0, Saturation = 0, Lightness = 70
+                                    }
+                                };
+                                colorsList.Add(new KeyValuePair<string, ColorVersions>(personalization.Target, colorVersion));
+                            }
+                            
+                            var color = colorsList.FirstOrDefault(x => x.Key == personalization.Target).Value;
+                            
+                            switch (personalization.SubSubType)
+                            {
+                                case "hue":
+                                    color.Best.Hue = int.Parse(personalization.BestValue);
+                                    color.Average.Hue = int.Parse(personalization.AverageValue);
+                                    color.Worst.Hue = int.Parse(personalization.WorstValue);
+                                    break;
+                                case "saturation":
+                                    color.Best.Saturation = int.Parse(personalization.BestValue);
+                                    color.Average.Saturation = int.Parse(personalization.AverageValue);
+                                    color.Worst.Saturation = int.Parse(personalization.WorstValue);
+                                    break;
+                                case "lightness":
+                                    color.Best.Lightness = int.Parse(personalization.BestValue);
+                                    color.Average.Lightness = int.Parse(personalization.AverageValue);
+                                    color.Worst.Lightness = int.Parse(personalization.WorstValue);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            break;
+                        default:
+                            settingsObjGood[personalization.Target] = personalization.BestValue;
+                            settingsObjAverage[personalization.Target] = personalization.AverageValue;
+                            settingsObjBad[personalization.Target] = personalization.WorstValue;
+                            break;
+                    }
+                    break;
+                case "navbar":
+                    navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Good,
+                        _helperService.GetNavbarLocationEnum(personalization.BestValue)));
+                    navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Average,
+                        _helperService.GetNavbarLocationEnum(personalization.AverageValue)));
+                    navbarList.Add(new KeyValuePair<UserPreferenceFit, NavbarLocation>(UserPreferenceFit.Bad,
+                        _helperService.GetNavbarLocationEnum(personalization.WorstValue)));
+                    break;
+                case "pageSelector":
+                    pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Good,
+                        personalization.BestValue));
+                    pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Average,
+                        personalization.AverageValue));
+                    pageSelectorList.Add(new KeyValuePair<UserPreferenceFit, string>(UserPreferenceFit.Bad,
+                        personalization.WorstValue));
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        // Colors are special case, they are added later than other objects
+        foreach (var color in colorsList)
+        {
+            settingsObjGood[color.Key] = color.Value.Best.GetValue();
+            settingsObjAverage[color.Key] = color.Value.Average.GetValue();
+            settingsObjBad[color.Key] = color.Value.Worst.GetValue();
+        }
+        
         cssSettingsList.Add(new KeyValuePair<UserPreferenceFit, JsonObject>(UserPreferenceFit.Good, settingsObjGood));
         cssSettingsList.Add(new KeyValuePair<UserPreferenceFit, JsonObject>(UserPreferenceFit.Average, settingsObjAverage));
         cssSettingsList.Add(new KeyValuePair<UserPreferenceFit, JsonObject>(UserPreferenceFit.Bad, settingsObjBad));
-
+        
         calculatedPersonalizationModel.StyleObjectList = cssSettingsList;
         calculatedPersonalizationModel.NavBarObjectList = navbarList;
         calculatedPersonalizationModel.PageSelectorObjectList = pageSelectorList;
+        
         
         return calculatedPersonalizationModel;
     }

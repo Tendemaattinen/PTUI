@@ -18,6 +18,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<PersonalizationQuestion> PersonalizationQuestions { get; set; }
     public DbSet<PersonalizationQuestionAnswer> PersonalizationQuestionAnswers { get; set; }
     public DbSet<UserBestSuitedAnswer> BestSuitedAnswers { get; set; }
+    public DbSet<DynamicPersonalization> DynamicPersonalizations { get; set; }
 
 
     public ApplicationDbContext(IConfiguration configuration)
@@ -58,6 +59,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(pqa => pqa.Question)
             .WithMany(pq => pq.Answers)
             .HasForeignKey(pqa => pqa.QuestionId);
+        
+        modelBuilder.Entity<DynamicPersonalization>()
+            .HasOne(dp => dp.Answer)
+            .WithMany(a => a.DynamicPersonalizations)
+            .HasForeignKey(da => da.AnswerId);
 
         base.OnModelCreating(modelBuilder);
     }

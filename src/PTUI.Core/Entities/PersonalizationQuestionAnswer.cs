@@ -16,5 +16,6 @@ public class PersonalizationQuestionAnswer
     [Required]
     public string Text { get; set; }
     public string? Image { get; set; }
+    public IList<DynamicPersonalization> DynamicPersonalizations { get; set; }
     
 }

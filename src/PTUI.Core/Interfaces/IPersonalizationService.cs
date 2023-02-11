@@ -8,5 +8,6 @@ namespace PTUI.Core.Interfaces;
 public interface IPersonalizationService
 {
     Task<IEnumerable<PersonalizationQuestion>> GetPersonalizationQuestions();
-    Task<CalculatedPersonalizationModel> CalculatePersonalization(string userId, JsonObject answerObject);
+    Task<CalculatedPersonalizationModel> CalculateDynamicPersonalization(string userId,
+        JsonObject answerObject);
 }

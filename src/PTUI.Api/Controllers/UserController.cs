@@ -6,7 +6,6 @@ using PTUI.Core.Interfaces;
 using PTUI.Core.Entities;
 using PTUI.Core.Model;
 using PTUI.Core.Models;
-using Microsoft.AspNet.Identity;
 using PTUI.Core.Enums;
 
 namespace PTUI.Api.Controllers;
@@ -180,7 +179,7 @@ public class UserController : ControllerBase
     }
     
     [HttpPost("preferenceFit")]
-    [Authorize]
+    //[Authorize]
     public async Task<IActionResult> SetPreferenceFit([FromBody]PreferenceFitPostModel model)
     {
         if (!(await _userService.SetUserPreferenceFit(model.UserId, model.Fit)))
