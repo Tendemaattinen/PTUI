@@ -1,22 +1,17 @@
 ﻿import React from 'react';
 import { useEffect } from 'react'
 import {Link, Navigate, useNavigate} from "react-router-dom";
-
 import {changePreference, logout} from "../../reducers/userSlice"
-
 import style from './NavigationBar.module.scss';
 import globalStyle from '../../assets/styles/globalStyle.module.scss';
-
 import {useAppDispatch, useAppSelector} from "../../hooks/hooks";
 import UserInterfaceHelpers from "../../helpers/UserInterfaceHelpers";
 
 function NavigationBar() {
     
     const navbarRef = React.createRef<HTMLDivElement>();
-    
     const dispatch = useAppDispatch();
     const { userName, userToken } = useAppSelector((state) => state.user)
-
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -36,24 +31,21 @@ function NavigationBar() {
     const resetSettings = async () => {
         let userId: (string | null) = localStorage.getItem('userId') ?? null;
         await UserInterfaceHelpers.setDefaultSettings(userId);
-        dispatch(changePreference(4)); //TODO: Test this
+        dispatch(changePreference(4));
     }
     
     return (
         <>
             <div id={'navbar'} ref={navbarRef} className={`${globalStyle.navbar} ${globalStyle.topNavbar}`}>
-                {/*<div className={style.navigationBarLogoDiv}>*/}
-                {/*    <p id={style.navigationBarLogo}>PTUI</p>*/}
-                {/*</div>*/}
                 <nav>
                     <Link className={globalStyle.navbarLink} to="/">Welcome</Link>
                     {
                         (userName != null)
                             ?
                             <>
-                                <Link className={globalStyle.navbarLink} to="/personalization">Personalization</Link>
-                                <Link className={globalStyle.navbarLink} to="/questionnaire">Questionnaire</Link>
-                                <Link className={globalStyle.navbarLink} to="/exampleContent">Example content page</Link>
+                                <Link className={globalStyle.navbarLink} to="/personalization">Personalization quiz</Link>
+                                <Link className={globalStyle.navbarLink} to="/questionnaire">Version selection</Link>
+                                <Link className={globalStyle.navbarLink} to="/exampleContent">Test page</Link>
                                 <a href={"#"} className={globalStyle.navbarLink} onClick={() => resetSettings()}>Reset settings</a>
                                 <a href={"#"} className={globalStyle.navbarLink}>{userName}</a>
                                 <a href={"#"} className={globalStyle.navbarLink} onClick={logoutUser}>Logout</a>
