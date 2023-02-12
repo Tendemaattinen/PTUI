@@ -204,6 +204,14 @@ export class UserInterfaceHelpers {
             })
         return defaultPreferenceJson;
     }
+    
+    static getApiUrl = () => {
+        return process.env.REACT_APP_API_BASE_URL?.toString() ?? "";
+    }
+    
+    static getApiUrlWithApiName = (apiName: string) => {
+        return UserInterfaceHelpers.getApiUrl() + apiName;
+    }
 }
 
 export default UserInterfaceHelpers;
