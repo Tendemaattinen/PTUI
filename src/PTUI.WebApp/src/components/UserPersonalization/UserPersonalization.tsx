@@ -86,7 +86,7 @@ function UserPersonalization() {
                                         if (answer.image !== null) {
                                             return(
                                                 <label key={index2} htmlFor={answer.name}>
-                                                    <input {...register(question.name)} type={"radio"} value={answer.name} id={answer.name} defaultChecked={index2 === 0} />
+                                                    <input {...register(question.name)} type={"radio"} value={answer.name} id={answer.name + index1} defaultChecked={index2 === 0} />
                                                     <span>&nbsp;</span>
                                                     <img src={answer.image} alt={"Times new roman"} className={style.radioImage}/>
                                                 </label>
@@ -94,7 +94,7 @@ function UserPersonalization() {
                                         }
                                         return(
                                             <label key={index2} htmlFor={answer.name}>
-                                                <input {...register(question.name)} type={"radio"} value={answer.name} id={answer.name} defaultChecked={index2 === 0}/>
+                                                <input {...register(question.name)} type={"radio"} value={answer.name} id={answer.name + index1} defaultChecked={index2 === 0}/>
                                                 <span>&nbsp;{answer.text}</span>
                                             </label>
                                         );

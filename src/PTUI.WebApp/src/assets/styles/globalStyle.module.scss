@@ -16,9 +16,9 @@
   --p-text-color: var(--text-color);
   --label-text-color: var(--text-color);
   --font-size-multiplier: 1;
-  --letter-spacing: 0em;
+  --letter-spacing-var: 0.0em;
   --line-height: 1.5;
-  --word-spacing: 0em;
+  --word-spacing-var: 0.1em;
 }
 
 html {
@@ -77,14 +77,20 @@ html * {
   p {
     color: var(--p-text-color);
     font-size: calc(var(--font-size-multiplier) * 1rem);
-    letter-spacing: var(--letter-spacing);
+    //letter-spacing: var(--letter-spacing);
     line-height: var(--line-height);
-    word-spacing: var(--word-spacing);
+    //word-spacing: var(--word-spacing);
   }
 
   input[type='radio'] {
     transform: scale(1.25);
   }
+}
+
+.textContent {
+  word-spacing: var(--word-spacing-var);
+  //word-spacing: 5em;
+  letter-spacing: var(--letter-spacing-var);
 }
 
 .errorText {

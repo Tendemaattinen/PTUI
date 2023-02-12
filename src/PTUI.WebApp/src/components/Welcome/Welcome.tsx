@@ -15,8 +15,9 @@ function Welcome() {
             <p>2. Login with user created in previous step</p>
             <p>3. Complete personalization quiz on Personalization quiz -page</p>
             <p>4. Test every personalization version on Version selection -page</p>
-            <p>5. Select best suited version based on choices you made on Personalizatio quiz</p>
-            <p>6. You can test other variations by doing personalization quiz again</p>
+            <p>5. You can test different personalization version on Test page</p>
+            <p>6. Select best suited version based on choices you made on Personalization quiz</p>
+            <p>7. You can test other variations by doing personalization quiz again</p>
             {/*<p>8. Fill google forms</p>*/}
             <br/>
         </div>

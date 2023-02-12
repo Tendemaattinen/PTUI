@@ -351,3 +351,96 @@ values
         WHERE PQA."Name" = 'black' AND PQ."Name" = 'text-color'),
     'css', 'text-color', null, 'text-color', 'black', 'black', 'white');
 
+
+-- Letter spacing
+insert into "Settings" ("Id", "Name", "Definition", "Type", "DefaultValue")
+values
+(gen_random_uuid(), 'letter-spacing', 'letter spacing', 0, '0');
+
+-- insert into "SettingValues" ("Id", "Name", "Value", "SettingId")
+-- values
+-- (gen_random_uuid(), 'black', 'black', (select "Id" from "Settings" as settings where settings."Name" = 'bg-color')),
+-- (gen_random_uuid(), 'white', 'white', (select "Id" from "Settings" as settings where settings."Name" = 'bg-color'));
+
+insert into "PersonalizationQuestions" ("Id", "Name", "Text")
+values (gen_random_uuid(), 'letter-spacing', 'Letter spacing');
+
+insert into "PersonalizationQuestionAnswers" ("Id", "QuestionId", "Name", "Text", "Image")
+values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WHERE PQ."Name" = 'letter-spacing'), 'default', 'Default', null);
+
+insert into "PersonalizationQuestionAnswers" ("Id", "QuestionId", "Name", "Text", "Image")
+values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WHERE PQ."Name" = 'letter-spacing'), 'big', 'Big', null);
+
+insert into "PersonalizationQuestionAnswers" ("Id", "QuestionId", "Name", "Text", "Image")
+values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WHERE PQ."Name" = 'letter-spacing'), 'bigger', 'Bigger', null);
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'default' AND PQ."Name" = 'letter-spacing'),
+    'css', 'letter-spacing', null, 'letter-spacing-var', '0', '0.1', '0.2');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'big' AND PQ."Name" = 'letter-spacing'),
+    'css', 'letter-spacing', null, 'letter-spacing-var', '0.1', '0', '0.2');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'bigger' AND PQ."Name" = 'letter-spacing'),
+    'css', 'letter-spacing', null, 'letter-spacing-var', '0.2', '0.1', '0');
+
+
+-- Word spacing
+insert into "Settings" ("Id", "Name", "Definition", "Type", "DefaultValue")
+values
+(gen_random_uuid(), 'word-spacing', 'word spacing', 0, '0');
+
+-- insert into "SettingValues" ("Id", "Name", "Value", "SettingId")
+-- values
+-- (gen_random_uuid(), 'black', 'black', (select "Id" from "Settings" as settings where settings."Name" = 'bg-color')),
+-- (gen_random_uuid(), 'white', 'white', (select "Id" from "Settings" as settings where settings."Name" = 'bg-color'));
+
+insert into "PersonalizationQuestions" ("Id", "Name", "Text")
+values (gen_random_uuid(), 'word-spacing', 'Word spacing');
+
+insert into "PersonalizationQuestionAnswers" ("Id", "QuestionId", "Name", "Text", "Image")
+values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WHERE PQ."Name" = 'word-spacing'), 'default', 'Default', null);
+
+insert into "PersonalizationQuestionAnswers" ("Id", "QuestionId", "Name", "Text", "Image")
+values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WHERE PQ."Name" = 'word-spacing'), 'big', 'Big', null);
+
+insert into "PersonalizationQuestionAnswers" ("Id", "QuestionId", "Name", "Text", "Image")
+values (gen_random_uuid(), (SELECT "Id" FROM "PersonalizationQuestions" AS PQ WHERE PQ."Name" = 'word-spacing'), 'bigger', 'Bigger', null);
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'default' AND PQ."Name" = 'word-spacing'),
+    'css', 'word-spacing', null, 'word-spacing-var', '0', '0.1', '0.2');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'big' AND PQ."Name" = 'word-spacing'),
+    'css', 'word-spacing', null, 'word-spacing-var', '0.1', '0', '0.2');
+
+insert into "DynamicPersonalizations" ("Id", "AnswerId", "Type", "SubType", "SubSubType", "Target", "BestValue", "AverageValue", "WorstValue")
+values 
+    (gen_random_uuid(), 
+    (SELECT PQA."Id" FROM "PersonalizationQuestionAnswers" AS PQA 
+        INNER JOIN "PersonalizationQuestions" AS PQ ON PQA."QuestionId" = PQ."Id" 
+        WHERE PQA."Name" = 'bigger' AND PQ."Name" = 'word-spacing'),
+    'css', 'word-spacing', null, 'word-spacing-var', '0.2', '0.1', '0');
