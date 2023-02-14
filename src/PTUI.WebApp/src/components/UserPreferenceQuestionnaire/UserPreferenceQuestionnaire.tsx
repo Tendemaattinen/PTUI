@@ -110,7 +110,7 @@ function UserPreferenceQuestionnaire() {
     
     return(
         <div id={upqStyle.upqComponent}>
-            <h1>Testing page</h1>
+            <h1>Version selection</h1>
             {/*<h2>Info</h2>*/}
             {/*<p>Create some kind of info box here.</p>*/}
             
