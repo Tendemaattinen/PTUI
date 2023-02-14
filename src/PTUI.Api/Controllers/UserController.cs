@@ -194,5 +194,11 @@ public class UserController : ControllerBase
     {
         return Ok(_userService.GetDefaultPreferences());
     }
-
+    
+    [HttpGet("isQuizDone")]
+    [Authorize]
+    public async Task<IActionResult> HasUserDonePersonalizationQuiz(string userId)
+    {
+        return Ok(await _userService.HasUserDonePersonalizationQuiz(userId));
+    }
 }

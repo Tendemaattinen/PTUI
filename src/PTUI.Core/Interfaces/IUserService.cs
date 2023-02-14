@@ -29,4 +29,5 @@ public interface IUserService
     Task<bool> SetUserPreferenceFit(string userId, UserPreferenceFit fit);
     Task<bool> SaveBestSuitedVersionAsync(string userId, UserPreferenceFit fit);
     string GetDefaultPreferences();
+    Task<bool> HasUserDonePersonalizationQuiz(string userId);
 }

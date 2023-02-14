@@ -11,7 +11,8 @@ const initialState = {
     userName: null as (null | string),
     error: null as (null | string),
     success: false,
-    preferenceType: 0 as number
+    preferenceType: 0 as number,
+    quizDone: false as boolean,
 }
 
 const userSlice = createSlice({
@@ -27,6 +28,7 @@ const userSlice = createSlice({
             state.userName = null;
             state.error = null;
             state.success = false;
+            state.quizDone = false;
             
             const asyncWrapper = async () => {
                 await UserInterfaceHelpers.setDefaultSettings(null);
@@ -40,6 +42,9 @@ const userSlice = createSlice({
         logAfterRefresh: (state) => {
             state.userToken = localStorage.getItem('token');
             state.userName = localStorage.getItem('user');
+        },
+        markQuizDone: (state) => {
+            state.quizDone = true;
         }
     }, 
     extraReducers: (builder) => {
@@ -69,18 +74,7 @@ const userSlice = createSlice({
             state.loading = false;
             if (payload != null) {
                 state.userName = payload;
-                //state.userInfo = payload;
-                //state.userToken = payload.userToken;
             }
-            
-            // TODO: Api call to get settings
-            // TODO: Test
-            // let data = UserInterfaceHelpers.getUserSettings(
-            //     localStorage.getItem('userId') ?? "",state.preference.preferenceType);
-            // UserInterfaceHelpers.setUserStyle(data);
-            
-            // TODO: Do i need use redux store in navbar?
-            
         })
         builder.addCase(userLogin.rejected, (state, action) => {
             state.loading = false;
@@ -155,5 +149,5 @@ export const userLogin = createAsyncThunk<string, {username: string, password: s
     }
 )
 
-export const { logout, changePreference, logAfterRefresh } = userSlice.actions
+export const { logout, changePreference, logAfterRefresh, markQuizDone } = userSlice.actions
 export default userSlice.reducer

@@ -212,6 +212,26 @@ export class UserInterfaceHelpers {
     static getApiUrlWithApiName = (apiName: string) => {
         return UserInterfaceHelpers.getApiUrl() + apiName;
     }
+
+    static getIsQuizDone = async (userId: string) => {
+        const url: string = UserInterfaceHelpers.formUrlAddress("isQuizDone");
+        let defaultValues : boolean = false;
+        await axios.get(url, {
+            headers: {
+                'Authorization': "Bearer " + localStorage.getItem("token") ?? "",
+            },
+            params: {
+                userId: userId,
+            }})
+            .then(function (response) {
+                defaultValues = response.data;
+            })
+            .catch(function(error) {
+                //alert("Getting " + component + " preference failed to error: " + error);
+                console.error(error);
+            })
+        return defaultValues;
+    }
 }
 
 export default UserInterfaceHelpers;

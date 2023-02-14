@@ -1,7 +1,7 @@
 ﻿import React, {useEffect, useState} from 'react';
 import {FieldValues, useForm} from "react-hook-form";
 
-import {userLogin} from "../../reducers/userSlice";
+import {userLogin, markQuizDone} from "../../reducers/userSlice";
 import {useAppDispatch, useAppSelector} from "../../hooks/hooks";
 import {useNavigate} from "react-router-dom";
 
@@ -24,12 +24,16 @@ function Login() {
     }
     
     useEffect(() => {
-        
         const asyncWrapper = async () => {
             if (userName != null) {
-                let versionType: number = Number(await UserInterfaceHelpers.getUserPreferenceFit(UserInterfaceHelpers.getUserId()));
-                await UserInterfaceHelpers.setUserPreferencesFromDatabase(UserInterfaceHelpers.getUserId(), versionType)
-
+                let userId: string = UserInterfaceHelpers.getUserId();
+                let versionType: number = Number(await UserInterfaceHelpers.getUserPreferenceFit(userId));
+                await UserInterfaceHelpers.setUserPreferencesFromDatabase(userId, versionType)
+                
+                if (await UserInterfaceHelpers.getIsQuizDone(userId)) {
+                    dispatch(markQuizDone());
+                }
+                
                 navigate('/');
             }
         }

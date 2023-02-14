@@ -458,6 +458,11 @@ public class UserService : IUserService
             return false;
         }
     }
+    
+    public async Task<bool> HasUserDonePersonalizationQuiz(string userId)
+    {
+        return await _context.UserPreferences.AnyAsync(x => x.UserId == userId);
+    }
 }
 
 

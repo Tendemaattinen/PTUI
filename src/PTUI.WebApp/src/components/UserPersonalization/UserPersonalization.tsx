@@ -8,12 +8,14 @@ import axios from "axios";
 import UserInterfaceHelpers from "../../helpers/UserInterfaceHelpers";
 import style from "./UserPersonalization.module.scss";
 import {Question} from "../../interfaces/Question";
+import {markQuizDone} from "../../reducers/userSlice";
+import {useAppDispatch} from "../../hooks/hooks";
 
 function UserPersonalization() {
-
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [submitAnswerSuccess, setSubmitAnswerSuccess] = useState<boolean>(false);
     const [questions, setQuestions] = useState<Question[]>([]);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -64,6 +66,7 @@ function UserPersonalization() {
             }})
             .then(function (response) {
                 data = JSON.stringify(response.data);
+                dispatch(markQuizDone());
                 setSubmitAnswerSuccess(true);
             })
             .catch(function(error) {

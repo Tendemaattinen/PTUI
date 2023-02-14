@@ -11,7 +11,7 @@ function NavigationBar() {
     
     const navbarRef = React.createRef<HTMLDivElement>();
     const dispatch = useAppDispatch();
-    const { userName, userToken } = useAppSelector((state) => state.user)
+    const { userName, quizDone, userToken } = useAppSelector((state) => state.user)
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -44,8 +44,16 @@ function NavigationBar() {
                             ?
                             <>
                                 <Link className={globalStyle.navbarLink} to="/personalization">Personalization quiz</Link>
-                                <Link className={globalStyle.navbarLink} to="/questionnaire">Version selection</Link>
-                                <Link className={globalStyle.navbarLink} to="/exampleContent">Test page</Link>
+                                {
+                                    (quizDone)
+                                    ?
+                                        <>
+                                            <Link className={globalStyle.navbarLink} to="/questionnaire">Version selection</Link>
+                                            <Link className={globalStyle.navbarLink} to="/exampleContent">Test page</Link>
+                                        </>
+                                    :
+                                        <></>
+                                }
                                 <a href={"#"} className={globalStyle.navbarLink} onClick={() => resetSettings()}>Reset settings</a>
                                 <a href={"#"} className={globalStyle.navbarLink}>{userName}</a>
                                 <a href={"#"} className={globalStyle.navbarLink} onClick={logoutUser}>Logout</a>
