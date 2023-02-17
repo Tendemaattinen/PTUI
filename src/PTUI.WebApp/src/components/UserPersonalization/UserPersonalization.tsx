@@ -92,6 +92,7 @@ function UserPersonalization() {
                                                     <input {...register(question.name)} type={"radio"} value={answer.name} id={answer.name + index1} defaultChecked={index2 === 0} />
                                                     <span>&nbsp;</span>
                                                     <img src={answer.image} alt={"Times new roman"} className={style.radioImage}/>
+                                                    <br/>
                                                 </label>
                                             );
                                         }
@@ -99,6 +100,7 @@ function UserPersonalization() {
                                             <label key={index2} htmlFor={answer.name}>
                                                 <input {...register(question.name)} type={"radio"} value={answer.name} id={answer.name + index1} defaultChecked={index2 === 0}/>
                                                 <span>&nbsp;{answer.text}</span>
+                                                <br/>
                                             </label>
                                         );
                                     })}
