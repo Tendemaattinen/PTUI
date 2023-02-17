@@ -102,7 +102,17 @@ html * {
 }
 
 #welcomeComponent {
-  
+}
+
+.welcomeTextDiv {
+  p {
+    text-align: left;
+  }
+  ul {
+    li {
+      text-align: left;
+    }
+  }
 }
 
 #loginComponent {

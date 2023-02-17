@@ -38,12 +38,12 @@ function NavigationBar() {
         <>
             <div id={'navbar'} ref={navbarRef} className={`${globalStyle.navbar} ${globalStyle.topNavbar}`}>
                 <nav>
-                    <Link className={globalStyle.navbarLink} to="/">Welcome</Link>
+                    <Link className={globalStyle.navbarLink} to="/">Instructions</Link>
                     {
                         (userName != null)
                             ?
                             <>
-                                <Link className={globalStyle.navbarLink} to="/personalization">Personalization quiz</Link>
+                                <Link className={globalStyle.navbarLink} to="/personalization">Survey</Link>
                                 {
                                     (quizDone)
                                     ?

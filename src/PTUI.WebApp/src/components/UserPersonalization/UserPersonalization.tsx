@@ -76,7 +76,7 @@ function UserPersonalization() {
     
     return(
         <div>
-            <h1>Personalization quiz</h1>
+            <h1>Personalization survey</h1>
             <div id={"successMessage"} className={`${globalStyle.message} ${globalStyle.success}`} style={{display: submitAnswerSuccess ? 'block' : 'none'}}>{"Answers submitted"}</div>
             <form onSubmit={handleSubmit(submitAnswers)} className={globalStyle.authForm}>
                 <div className={registerStyle.personalizationSection}>
