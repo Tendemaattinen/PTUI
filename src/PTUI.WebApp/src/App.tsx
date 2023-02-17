@@ -6,7 +6,7 @@ import Footer from "./components/Footer/Footer";
 import globalStyle from './assets/styles/globalStyle.module.scss';
 import UserInterfaceHelpers from "./helpers/UserInterfaceHelpers";
 import {useAppDispatch, useAppSelector} from "./hooks/hooks";
-import {logAfterRefresh} from "./reducers/userSlice";
+import {logAfterRefresh, markQuizDone} from "./reducers/userSlice";
 
 function App() {
 
@@ -39,8 +39,18 @@ function App() {
         }
         
         if (!userToken && localStorage.getItem('token')) {
+
+            const asyncWrapper = async () => {
+                let userId: string = UserInterfaceHelpers.getUserId();
+                if (await UserInterfaceHelpers.getIsQuizDone(userId)) {
+                    dispatch(markQuizDone());
+                }
+            }
+            
+            
             dispatch(logAfterRefresh());
             changePreferenceUI();
+            asyncWrapper();
         }
     }, [])
     
