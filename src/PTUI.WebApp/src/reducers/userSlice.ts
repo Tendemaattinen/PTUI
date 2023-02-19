@@ -11,7 +11,7 @@ const initialState = {
     userName: null as (null | string),
     error: null as (null | string),
     success: false,
-    preferenceType: 0 as number,
+    preferenceType: 4 as number,
     quizDone: false as boolean,
 }
 
