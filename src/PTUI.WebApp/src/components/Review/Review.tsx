@@ -72,7 +72,7 @@ function Review() {
     
     return (
         <div>
-            <h3>Select the best suited version based on your choices in preference quiz</h3>
+            <h3>Choose the version that is closest to your survey answers</h3>
             <div id={"successMessage"} className={`${globalStyle.message} ${globalStyle.success}`} style={{display: submitBestSuitedSuccess ? 'block' : 'none'}}>{"Answer submitted"}</div>
             <form onSubmit={handleSubmit(saveUserBestSuitedAnswer)}>
                 <div>
@@ -83,6 +83,7 @@ function Review() {
                         })}
                     </select>
                     <div>
+                        <br/>
                         <input type={"submit"} value={"Submit"}/>
                     </div>
                 </div>
