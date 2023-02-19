@@ -9,13 +9,17 @@ import UserInterfaceHelpers from "../../helpers/UserInterfaceHelpers";
 import style from "./UserPersonalization.module.scss";
 import {Question} from "../../interfaces/Question";
 import {markQuizDone} from "../../reducers/userSlice";
-import {useAppDispatch} from "../../hooks/hooks";
+import {useAppDispatch, useAppSelector} from "../../hooks/hooks";
+import SuccessMessage from "../Messages/SuccessMessage/SuccessMessage";
+import {useNavigate} from "react-router-dom";
 
 function UserPersonalization() {
     const { register, handleSubmit, formState: { errors } } = useForm();
-    const [submitAnswerSuccess, setSubmitAnswerSuccess] = useState<boolean>(false);
     const [questions, setQuestions] = useState<Question[]>([]);
+    const [display, setDisplay] = useState<string>("none");
+    const [displayError, setDisplayError] = useState<string>("none");
     const dispatch = useAppDispatch();
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,6 +33,31 @@ function UserPersonalization() {
             return;
         }
     }, [questions])
+
+    const submitAnswers = async (formData:  FieldValues) => {
+        const url: string = UserInterfaceHelpers.getApiUrlWithApiName("personalization2");
+        let object = await formAnswerObject(questions, formData);
+        const content: string = JSON.stringify({userId: localStorage.getItem('user') ?? "",
+            answers: JSON.stringify(object)});
+
+        let data: string = "";
+        setDisplayError("none");
+        setDisplay("none");
+        await axios.post(url, content, {
+            headers: {
+                'Content-Type': 'application/json',
+            }})
+            .then(async function (response) {
+                data = JSON.stringify(response.data);
+                dispatch(markQuizDone());
+                setDisplay("block");
+                navigate('/questionnaire');
+            })
+            .catch(function(error) {
+                console.log("Error: " + error);
+                setDisplayError("block")
+            })
+    }
     
     const getQuestions = async () => {
         const url: string = UserInterfaceHelpers.getApiUrlWithApiName("personalizationQuestion");
@@ -52,32 +81,12 @@ function UserPersonalization() {
         })
         return obj;
     }
-
-    const submitAnswers = async (formData:  FieldValues) => {
-        const url: string = UserInterfaceHelpers.getApiUrlWithApiName("personalization2");
-        let object = await formAnswerObject(questions, formData);
-        const content: string = JSON.stringify({userId: localStorage.getItem('user') ?? "",
-            answers: JSON.stringify(object)});
-        
-        let data = "";
-        await axios.post(url, content, {
-            headers: {
-                'Content-Type': 'application/json',
-            }})
-            .then(function (response) {
-                data = JSON.stringify(response.data);
-                dispatch(markQuizDone());
-                setSubmitAnswerSuccess(true);
-            })
-            .catch(function(error) {
-                console.log("Error: " + error);
-            })
-    }
     
     return(
         <div>
             <h1>Personalization survey</h1>
-            <div id={"successMessage"} className={`${globalStyle.message} ${globalStyle.success}`} style={{display: submitAnswerSuccess ? 'block' : 'none'}}>{"Answers submitted"}</div>
+            <SuccessMessage display={display} text={"Answers submitted"}/>
+            <div id={"errorMessageLoginPage"} className={`${globalStyle.message} ${globalStyle.error}`} style={{display: displayError}}>Submitting survey failed!</div>
             <form onSubmit={handleSubmit(submitAnswers)} className={globalStyle.authForm}>
                 <div className={registerStyle.personalizationSection}>
                     {questions.map((question,index1) => {
