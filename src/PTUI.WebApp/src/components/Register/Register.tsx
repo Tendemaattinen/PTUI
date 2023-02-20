@@ -10,6 +10,7 @@ import axios from "axios";
 import registerStyle from './Register.module.scss';
 import globalStyle from '../../assets/styles/globalStyle.module.scss';
 import {useAppDispatch, useAppSelector} from "../../hooks/hooks";
+import WarningMessage from "../Messages/WarningMessage/WarningMessage";
 
 function Register() {
     const {loading, error, success} = useAppSelector(
@@ -44,6 +45,7 @@ function Register() {
     return (
         <div className={registerStyle.registerForm}>
             <h1>Register</h1>
+            <WarningMessage display={'block'} text={"Registering and logging in may take a while if the database is in sleep mode"}/>
             <div id={"errorMessage"} className={`${globalStyle.message} ${globalStyle.error}`}>{error}</div>
             <div id={"successMessage"} className={`${globalStyle.message} ${globalStyle.success}`} style={{display: success !== false ? 'block' : 'none'}}>{"User registered"}</div>
             <form onSubmit={handleSubmit(submitForm)} className={globalStyle.authForm}>

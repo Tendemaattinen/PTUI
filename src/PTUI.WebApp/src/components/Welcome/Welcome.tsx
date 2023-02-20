@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import globalStyle from '../../assets/styles/globalStyle.module.scss';
 import {useNavigate} from "react-router-dom";
+import WarningMessage from "../Messages/WarningMessage/WarningMessage";
 
 function Welcome() {
     
@@ -11,6 +12,7 @@ function Welcome() {
     
     return(
         <div id={globalStyle.welcomeComponent}>
+            <WarningMessage display={'block'} text={"Registering and logging in may take a while if the database is in sleep mode"}/>
             <h1>Instructions</h1>
             <br/>
             <div className={globalStyle.welcomeTextDiv}>

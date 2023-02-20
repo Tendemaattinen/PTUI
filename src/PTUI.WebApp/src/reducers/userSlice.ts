@@ -97,6 +97,7 @@ export const registerUser = createAsyncThunk<string, { firstName: string, lastNa
     'user/register',
     async ({ firstName, lastName, email, username, password }, thunkApi) => {
         try {
+            document.body.style.cursor='wait';
             const url: string = process.env.REACT_APP_API_BASE_URL + "register";
             const content: string = JSON.stringify({firstName: firstName, lastName: lastName,username: username, email: email, password: password })
             await axios.post(url, content, {
@@ -109,8 +110,10 @@ export const registerUser = createAsyncThunk<string, { firstName: string, lastNa
                 .catch(function(error) {
                     throw thunkApi.rejectWithValue(error.response.data);
                 })
+            document.body.style.cursor='default';
         }
         catch (error: unknown) {
+            document.body.style.cursor='default';
             throw thunkApi.rejectWithValue(JSON.stringify(error));
         }
         return "";
@@ -122,6 +125,7 @@ export const userLogin = createAsyncThunk<string, {username: string, password: s
     async ({username, password}, thunkApi) => {
         let userName: string = "";
         try {
+            document.body.style.cursor='wait';
             const url: string = process.env.REACT_APP_API_BASE_URL + "token";
             const content: string = JSON.stringify({username: username, password: password})
             
@@ -141,8 +145,10 @@ export const userLogin = createAsyncThunk<string, {username: string, password: s
                 .catch(function(error) {
                     throw thunkApi.rejectWithValue(error.response.data);
                 })
+            document.body.style.cursor='default';
         }
         catch (error: unknown) {
+            document.body.style.cursor='default';
             throw thunkApi.rejectWithValue(JSON.stringify(error));
         }
         return userName;

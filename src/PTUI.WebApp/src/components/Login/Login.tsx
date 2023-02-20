@@ -8,6 +8,7 @@ import {useNavigate} from "react-router-dom";
 import styles from './Login.module.scss';
 import globalStyle from '../../assets/styles/globalStyle.module.scss';
 import UserInterfaceHelpers from "../../helpers/UserInterfaceHelpers";
+import WarningMessage from "../Messages/WarningMessage/WarningMessage";
 
 function Login() {
     const { userName, loading, error } = useAppSelector((state) => state.user)
@@ -54,6 +55,7 @@ function Login() {
     return (
         <div id={globalStyle.loginComponent}>
             <h1>Login</h1>
+            <WarningMessage display={'block'} text={"Registering and logging in may take a while if the database is in sleep mode"}/>
             <div id={"errorMessageLoginPage"} className={`${globalStyle.message} ${globalStyle.error}`}>{error}</div>
             <form onSubmit={handleSubmit(submitForm)} className={globalStyle.authForm}>
                 <div>
