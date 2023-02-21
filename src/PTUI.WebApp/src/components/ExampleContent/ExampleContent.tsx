@@ -31,7 +31,7 @@ function ExampleContent() {
     useEffect(() => {
         const asyncWrapper = async () => {
             let pageSelectorType = 'numbers';
-            if (!userToken && localStorage.getItem('token')) {
+            if (localStorage.getItem('token')) {
                 pageSelectorType = await UserInterfaceHelpers.getComponentPreference(UserInterfaceHelpers.getUserId(), 'pageSelector',preferenceType);
             }
             
