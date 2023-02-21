@@ -144,6 +144,7 @@ function ExampleContent() {
                         <input type={'text'} {...register('consoleInput')}></input>
                         <button>Submit</button>
                     </form>
+                    <p>Possible commands: next, previous, first, second, third, last, 1 - 3</p>
                 </div>
                 :
                 <></>
