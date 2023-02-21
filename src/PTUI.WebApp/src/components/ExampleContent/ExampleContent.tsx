@@ -16,7 +16,7 @@ function ExampleContent() {
     const [maxPages, setMaxPage] = useState(3);
     const { preferenceType } = useAppSelector((state) => state.user);
     const { userName, userToken } = useAppSelector((state) => state.user)
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
     useEffect(() => {
         if (document.getElementById('changePageRadio' + currentPage)) {
@@ -95,6 +95,7 @@ function ExampleContent() {
                 // TODO: Invalid input
                 break;
         }
+        reset();
     }
 
     const renderContentPage = () => {
