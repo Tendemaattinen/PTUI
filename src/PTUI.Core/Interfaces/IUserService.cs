@@ -1,4 +1,5 @@
-﻿using PTUI.Core.Entities;
+﻿using System.Text.Json.Nodes;
+using PTUI.Core.Entities;
 using PTUI.Core.Enums;
 using PTUI.Core.Model;
 using PTUI.Core.Models;
@@ -30,4 +31,6 @@ public interface IUserService
     Task<bool> SaveBestSuitedVersionAsync(string userId, UserPreferenceFit fit);
     string GetDefaultPreferences();
     Task<bool> HasUserDonePersonalizationQuiz(string userId);
+    Task<bool> SaveUserAnswers(string userId, JsonObject answers);
+    Task<JsonObject> GetUserAnswers(string userId);
 }

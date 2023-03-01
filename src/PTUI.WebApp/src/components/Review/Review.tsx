@@ -9,37 +9,7 @@ function Review() {
 
     const { preferenceType } = useAppSelector((state) => state.preference)
     const { register, handleSubmit, formState: { errors } } = useForm();
-
     const [submitBestSuitedSuccess, setSubmitBestSuitedSuccess] = useState<boolean>(false);
-    
-    const saveUserRating = async (formData: FieldValues) => {
-        let userId = localStorage.getItem('userId');
-        if (userId !== null) {
-            try {
-                const url: string = process.env.REACT_APP_API_BASE_URL + "saverating";
-                const content: string = JSON.stringify({userId: userId, rating: formData.rating, 
-                    reason: formData.ratingReason, type: preferenceType })
-                // API call
-                await axios.post(url, content, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
-                    }
-                })
-                    .then(function (response) {
-                        alert("Rating saved");
-                        //setSubmitBestSuitedSuccess(true);
-                    })
-                    .catch(function(error) {
-                        console.log("Error: " + error);
-                        alert("Saving rating failed, error: " + error.respose)
-                    })
-            }
-            catch (error: unknown) {
-                // TODO: Error
-            }
-        }
-    }
     
     const saveUserBestSuitedAnswer = async (formData: FieldValues) => {
         let userId = localStorage.getItem('userId');

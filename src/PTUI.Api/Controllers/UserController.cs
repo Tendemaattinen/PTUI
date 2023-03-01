@@ -201,4 +201,11 @@ public class UserController : ControllerBase
     {
         return Ok(await _userService.HasUserDonePersonalizationQuiz(userId));
     }
+    
+    [HttpGet("getUserAnswers")]
+    //[Authorize]
+    public async Task<IActionResult> GetUserAnswers(string userId = "37d542b5-f3df-43ef-9202-18a9bd06784d")
+    {
+        return Ok(await _userService.GetUserAnswers(userId));
+    }
 }

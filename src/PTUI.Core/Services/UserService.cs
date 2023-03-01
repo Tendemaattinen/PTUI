@@ -463,6 +463,62 @@ public class UserService : IUserService
     {
         return await _context.UserPreferences.AnyAsync(x => x.UserId == userId);
     }
+
+    public async Task<bool> SaveUserAnswers(string userId, JsonObject answers)
+    {
+        try
+        {
+            var userAnswer = new UserAnswer()
+            {
+                Id = new Guid(),
+                UserId = userId,
+                Answers = JsonSerializer.Serialize(answers),
+                Version = GetUserPreferencesMaxVersion(userId, UserPreferenceFit.Good)
+            };
+
+            _context.UserAnswers.Add(userAnswer);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    public async Task<JsonObject> GetUserAnswers(string userId)
+    {
+        try
+        {
+            var maxVersion = GetUserPreferencesMaxVersion(userId, UserPreferenceFit.Good);
+        
+            var answers = _context.UserAnswers.FirstOrDefault(x => 
+                    x.UserId == userId && 
+                    x.Version == maxVersion)
+                ?.Answers ?? "";
+        
+            var ansObj = JsonNode.Parse(answers);
+            var keys = _context.PersonalizationQuestions.Select(x => x.Name).ToList();
+
+            var returnable = new JsonObject();
+
+            foreach (var key in keys)
+            {
+                var obj = ansObj?[key]?.ToString() ?? "";
+                var question = _context.PersonalizationQuestions.FirstOrDefault(x => x.Name == key);
+                var questionName = question?.Text ?? "";
+                var questionAnswer = _context.PersonalizationQuestionAnswers.FirstOrDefault(x => x.QuestionId == question.Id && x.Name == obj)?.Text ?? "";
+                returnable.Add(questionName, questionAnswer);
+            }
+
+            return returnable;
+        }
+        catch (Exception ex)
+        {
+            return new JsonObject();
+        }
+    }
 }
 
 

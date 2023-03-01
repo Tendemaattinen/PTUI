@@ -19,7 +19,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<PersonalizationQuestionAnswer> PersonalizationQuestionAnswers { get; set; }
     public DbSet<UserBestSuitedAnswer> BestSuitedAnswers { get; set; }
     public DbSet<DynamicPersonalization> DynamicPersonalizations { get; set; }
-
+    public DbSet<UserAnswer> UserAnswers { get; set; }
 
     public ApplicationDbContext(IConfiguration configuration)
     {

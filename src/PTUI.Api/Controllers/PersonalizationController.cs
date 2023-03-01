@@ -32,9 +32,10 @@ public class PersonalizationController : ControllerBase
     [HttpPost("personalization2")]
     public async Task<IActionResult> Personalization2Async(PersonalizationModel2 model)
     {
+        var answersObject = JsonNode.Parse(model.Answers)!.AsObject();
         var calculatedPersonalizationModel =
             await _personalizationService.CalculateDynamicPersonalization(model.UserId,
-                JsonObject.Parse(model.Answers)!.AsObject());
+                answersObject);
         
         var userId = await _userService.GetUserIdByNameAsync(model.UserId);
         
@@ -58,6 +59,8 @@ public class PersonalizationController : ControllerBase
             UserPreferenceFit.Bad,
             calculatedPersonalizationModel.PageSelectorObjectList.FirstOrDefault(x => x.Key == UserPreferenceFit.Bad).Value);
 
+        await _userService.SaveUserAnswers(userId, answersObject);
+        
         return Ok(model);
     }
 
