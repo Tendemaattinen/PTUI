@@ -487,10 +487,11 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<JsonObject> GetUserAnswers(string userId)
+    public async Task<List<JsonObject>> GetUserAnswers(string userId)
     {
         try
         {
+            var objectList = new List<JsonObject>();
             var maxVersion = GetUserPreferencesMaxVersion(userId, UserPreferenceFit.Good);
         
             var answers = _context.UserAnswers.FirstOrDefault(x => 
@@ -501,22 +502,23 @@ public class UserService : IUserService
             var ansObj = JsonNode.Parse(answers);
             var keys = _context.PersonalizationQuestions.Select(x => x.Name).ToList();
 
-            var returnable = new JsonObject();
-
             foreach (var key in keys)
             {
+                var jsonObject = new JsonObject();
                 var obj = ansObj?[key]?.ToString() ?? "";
                 var question = _context.PersonalizationQuestions.FirstOrDefault(x => x.Name == key);
                 var questionName = question?.Text ?? "";
                 var questionAnswer = _context.PersonalizationQuestionAnswers.FirstOrDefault(x => x.QuestionId == question.Id && x.Name == obj)?.Text ?? "";
-                returnable.Add(questionName, questionAnswer);
+                jsonObject.Add("question", questionName);
+                jsonObject.Add("answer", questionAnswer);
+                objectList.Add(jsonObject);
             }
 
-            return returnable;
+            return objectList;
         }
         catch (Exception ex)
         {
-            return new JsonObject();
+            return new List<JsonObject>();
         }
     }
 }

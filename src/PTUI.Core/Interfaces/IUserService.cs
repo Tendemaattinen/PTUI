@@ -32,5 +32,5 @@ public interface IUserService
     string GetDefaultPreferences();
     Task<bool> HasUserDonePersonalizationQuiz(string userId);
     Task<bool> SaveUserAnswers(string userId, JsonObject answers);
-    Task<JsonObject> GetUserAnswers(string userId);
+    Task<List<JsonObject>> GetUserAnswers(string userId);
 }
