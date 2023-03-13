@@ -120,7 +120,7 @@ function ExampleContent() {
                 ?
                 <div className={style.pageSelectorDiv}>
                 {Array.from(Array(maxPages).keys()).map(x => ++x).map(pageNumber => {
-                        return (<button onClick={() => setCurrentPage(pageNumber)}>Page {pageNumber}</button>)
+                        return (<button key={"numberSelector"+pageNumber} onClick={() => setCurrentPage(pageNumber)}>Page {pageNumber}</button>)
                     })}
                 </div>
                 :
@@ -155,7 +155,7 @@ function ExampleContent() {
                 <div className={style.pageSelectorDiv}>
                     <select onChange={() => changePageDropDown()} id={"pageSelectorDropdown"}>
                         {Array.from(Array(maxPages).keys()).map(x => ++x).map(item => {
-                            return (<option key={item} value={item}>{item}</option> )
+                            return (<option key={"dropdown" + item} value={item}>{item}</option> )
                         })}
                     </select>
                 </div>
